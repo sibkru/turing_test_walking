@@ -87,7 +87,6 @@ function initBuffers(gl) {
     var positionBuffers = [];
 
     const positions = createCube([0, 0, 0]);
-    console.log(positions)
     for (var j = 0; j < 1; ++j){
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -216,16 +215,11 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
 
     // Set the drawing position to the "identity" point, which is
     // the center of the scene.
-    for (var j = 0; j < 2; ++j) {
-        if (j == 1){
-            x = lines[t%lines.length][0]
-            y = lines[t%lines.length][1]
-            z = lines[t%lines.length][2] - 16
-        } else {
-            x = lines[t%lines.length][3]
-            y = lines[t%lines.length][4]
-            z = lines[t%lines.length][5] - 16
-        }
+    const n_points = lines[0].length/3
+    for (var j = 0; j < n_points; ++j) {
+        x = lines[t%lines.length][j]
+        y = lines[t%lines.length][j+1]
+        z = lines[t%lines.length][j+2] - 16
         const modelViewMatrix = createModelViewMatrix([x,y,z]);
 
         gl.uniformMatrix4fv(
