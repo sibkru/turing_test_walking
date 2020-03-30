@@ -218,13 +218,14 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     // the center of the scene.
     for (var j = 0; j < 2; ++j) {
         if (j == 1){
-            x = lines[t%lines.length][0] + 2
-            y = lines[t%lines.length][1]
-        } else {
             x = lines[t%lines.length][0]
-            y = lines[t%lines.length][1] + 2
+            y = lines[t%lines.length][1]
+            z = lines[t%lines.length][2] - 16
+        } else {
+            x = lines[t%lines.length][3]
+            y = lines[t%lines.length][4]
+            z = lines[t%lines.length][5] - 16
         }
-        z = -10
         const modelViewMatrix = createModelViewMatrix([x,y,z]);
 
         gl.uniformMatrix4fv(
