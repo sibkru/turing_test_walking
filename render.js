@@ -8,42 +8,6 @@ for (var j = 0; j < lines.length; ++j){
     lines[j] = lines[j].split(";").map(parseFloat)
 }
 
-function createCube() {
-    const positions = [
-        // Front face
-        -1.0, -1.0,  1.0,
-        1.0, -1.0,  1.0,
-        1.0,  1.0,  1.0,
-        -1.0,  1.0,  1.0,
-        // Back face
-        -1.0, -1.0, -1.0,
-        -1.0,  1.0, -1.0,
-        1.0,  1.0, -1.0,
-        1.0, -1.0, -1.0,
-        // Top face
-        -1.0,  1.0, -1.0,
-        -1.0,  1.0,  1.0,
-        1.0,  1.0,  1.0,
-        1.0,  1.0, -1.0,
-        // Bottom face
-        -1.0, -1.0, -1.0,
-        1.0, -1.0, -1.0,
-        1.0, -1.0,  1.0,
-        -1.0, -1.0,  1.0,
-        // Right face
-        1.0, -1.0, -1.0,
-        1.0,  1.0, -1.0,
-        1.0,  1.0,  1.0,
-        1.0, -1.0,  1.0,
-        // Left face
-        -1.0, -1.0, -1.0,
-        -1.0, -1.0,  1.0,
-        -1.0,  1.0,  1.0,
-        -1.0,  1.0, -1.0,
-        ];
-    return positions;
-}
-
 main();
 
 function main() {
@@ -122,7 +86,8 @@ function initBuffers(gl) {
     // Create a buffer for the square's positions.
     var positionBuffers = [];
 
-    const positions = createCube();
+    const positions = createCube([0, 0, 0]);
+    console.log(positions)
     for (var j = 0; j < 1; ++j){
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -186,7 +151,6 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     // ratio that matches the display size of the canvas
     // and we only want to see objects between 0.1 units
     // and 100 units away from the camera.
-
     const fieldOfView = 45 * Math.PI / 180;   // in radians
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
@@ -203,22 +167,10 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
 
     // Set the drawing position to the "identity" point, which is
     // the center of the scene.
-    const modelViewMatrix = mat4.create();
-
-    // Now move the drawing position a bit to where we want to
-    // start drawing the square.
-
-    // console.log(lines[t%50][0])
-    mat4.translate(modelViewMatrix,     // destination matrix
-                   modelViewMatrix,     // matrix to translate
-                  [lines[t%lines.length][0],
-                   lines[t%lines.length][1],
-                   -16.0]);  // amount to translate
-
-    mat4.rotate(modelViewMatrix,
-        modelViewMatrix,
-        squareRotation * .7,
-        [0, 1, 1]);
+    const modelViewMatrix = createModelViewMatrix([
+        lines[t%lines.length][0],
+        lines[t%lines.length][1],
+        -16.0]);
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
@@ -297,4 +249,65 @@ function loadFile(filePath) {
         result = xmlhttp.responseText;
     }
     return result;
+}
+
+function createCube(center) {
+    var positions = [
+        // Front face
+        -1.0, -1.0,  1.0,
+        1.0, -1.0,  1.0,
+        1.0,  1.0,  1.0,
+        -1.0,  1.0,  1.0,
+        // Back face
+        -1.0, -1.0, -1.0,
+        -1.0,  1.0, -1.0,
+        1.0,  1.0, -1.0,
+        1.0, -1.0, -1.0,
+        // Top face
+        -1.0,  1.0, -1.0,
+        -1.0,  1.0,  1.0,
+        1.0,  1.0,  1.0,
+        1.0,  1.0, -1.0,
+        // Bottom face
+        -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0, -1.0,  1.0,
+        -1.0, -1.0,  1.0,
+        // Right face
+        1.0, -1.0, -1.0,
+        1.0,  1.0, -1.0,
+        1.0,  1.0,  1.0,
+        1.0, -1.0,  1.0,
+        // Left face
+        -1.0, -1.0, -1.0,
+        -1.0, -1.0,  1.0,
+        -1.0,  1.0,  1.0,
+        -1.0,  1.0, -1.0,
+        ];
+    for (var j = 0; j < positions.length; ++j) {
+        if (j % 3 == 0){
+            positions[j] += center[0]
+        } else if (j % 3 == 1) {
+            positions[j] += center[1]
+        } else {
+            positions[j] += center[2]
+        }
+    }
+    return positions;
+}
+
+function createModelViewMatrix(translation) {
+    const modelViewMatrix = mat4.create();
+
+    // Now move the drawing position a bit to where we want to
+    // start drawing the square.
+    mat4.translate(modelViewMatrix,     // destination matrix
+                   modelViewMatrix,     // matrix to translate
+                   translation);  // amount to translate
+
+    mat4.rotate(modelViewMatrix,
+        modelViewMatrix,
+        squareRotation * .7,
+        [0, 1, 1]);
+    return modelViewMatrix;
 }
