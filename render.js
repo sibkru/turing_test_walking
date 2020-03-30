@@ -4,7 +4,7 @@ var frame = 0;
 
 const path = loadFile('path.txt')
 const lines = path.split("\n")
-for (var j = 0; j < lin.length; ++j){
+for (var j = 0; j < lines.length; ++j){
     lines[j] = lines[j].split(";").map(parseFloat)
 }
 
@@ -17,8 +17,8 @@ function main() {
     const gl = canvas.getContext('webgl');
 
     if (!gl) {
-    alert('Unable to initialize WebGL. Your browser or machine may not support it.');
-    return;
+        alert('Unable to initialize WebGL. Your browser or machine may not support it.');
+        return;
     }
 
     // Vertex shader program
@@ -195,10 +195,6 @@ function initShaderProgram(gl, vsSource, fsSource) {
     return shaderProgram;
 }
 
-//
-// creates a shader of the given type, uploads the source and
-// compiles it.
-//
 function loadShader(gl, type, source) {
     const shader = gl.createShader(type);
 
