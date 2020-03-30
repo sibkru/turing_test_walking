@@ -165,12 +165,6 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
                    zNear,
                    zFar);
 
-    // Set the drawing position to the "identity" point, which is
-    // the center of the scene.
-    const modelViewMatrix = createModelViewMatrix([
-        lines[t%lines.length][0],
-        lines[t%lines.length][1],
-        -16.0]);
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
@@ -219,18 +213,31 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
       programInfo.uniformLocations.projectionMatrix,
       false,
       projectionMatrix);
-    gl.uniformMatrix4fv(
-      programInfo.uniformLocations.modelViewMatrix,
-      false,
-      modelViewMatrix);
 
-    {
-        const offset = 0;
-        // const vertexCount = 4;
-        // gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
-        const vertexCount = 36;
-        const type = gl.UNSIGNED_SHORT;
-        gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+    // Set the drawing position to the "identity" point, which is
+    // the center of the scene.
+    for (var j = 0; j < 2; ++j) {
+        if (j == 1){
+            x = lines[t%lines.length][0] + 2
+            y = lines[t%lines.length][1]
+        } else {
+            x = lines[t%lines.length][0]
+            y = lines[t%lines.length][1] + 2
+        }
+        z = -10
+        const modelViewMatrix = createModelViewMatrix([x,y,z]);
+
+        gl.uniformMatrix4fv(
+          programInfo.uniformLocations.modelViewMatrix,
+          false,
+          modelViewMatrix);
+
+        {
+            const offset = 0;
+            const vertexCount = 36;
+            const type = gl.UNSIGNED_SHORT;
+            gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+        }
     }
     squareRotation += deltaTime
     // console.log(deltaTime)
@@ -309,5 +316,9 @@ function createModelViewMatrix(translation) {
         modelViewMatrix,
         squareRotation * .7,
         [0, 1, 1]);
+
+    mat4.scale(modelViewMatrix,
+               modelViewMatrix,
+               [0.1, 0.1, 0.1]);
     return modelViewMatrix;
 }
