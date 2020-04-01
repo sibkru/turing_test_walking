@@ -128,7 +128,7 @@ ax = fig.add_subplot(111, projection="3d")
 
 ax.axis("equal")
 
-joint_idx = {s.name: slice((j + 0) * 3, (j + 1) * 3) for j, s in enumerate(skeleton)}
+joint_idx = {s: slice((j + 0) * 3, (j + 1) * 3) for j, s in enumerate(all_joints)}
 for joint in all_joints:
     x, y, z = P[20, joint_idx[joint]]
     ax.plot([x], [y], [z], "o", markersize=10, label=joint)
