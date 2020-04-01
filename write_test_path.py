@@ -82,10 +82,32 @@ motion = np.concatenate((pelvis, joints), axis=1)
 joint_idx = {s.name: slice((j + 1) * 3, (j + 2) * 3) for j, s in enumerate(skeleton)}
 skdict = {s.name: s for s in skeleton}
 
+all_joints = [
+    "pelvis",
+    "pelvis_right_femur",
+    "right_femur_tibia",
+    "right_tibia_foot",
+    "pelvis_left_femur",
+    "left_femur_tibia",
+    "left_tibia_foot",
+    "pelvis_spine1",
+    "spine1",
+    "spine2",
+    "neck",
+    "right_manubrium",
+    "right_clavicle",
+    "right_humerus",
+    "right_radius",
+    "left_manubrium",
+    "left_clavicle",
+    "left_humerus",
+    "left_radius",
+]
 lst = []
 for t in range(len(motion)):
     cd = add_offset(skeleton[0], {}, t)
-    lst.append(np.array([v[1][:3].T for k, v in cd.items()]).flatten() / 20)
+    c3d = np.array([cd[k][1][:3].T for k in all_joints]).flatten()
+    lst.append(c3d / 20)
 P = np.array(lst)
 
 round3 = partial(round, ndigits=3)
@@ -107,25 +129,7 @@ ax = fig.add_subplot(111, projection="3d")
 ax.axis("equal")
 
 joint_idx = {s.name: slice((j + 0) * 3, (j + 1) * 3) for j, s in enumerate(skeleton)}
-joints = [
-    "pelvis",
-    "spine1",
-    "spine2",
-    "pelvis_right_femur",
-    "right_femur_tibia",
-    "right_tibia_foot",
-    "pelvis_left_femur",
-    "neck",
-    "right_manubrium",
-    "right_clavicle",
-    "right_humerus",
-    "right_radius",
-    "left_manubrium",
-    "left_clavicle",
-    "left_humerus",
-    "left_radius",
-]
-for joint in joints:
+for joint in all_joints:
     x, y, z = P[20, joint_idx[joint]]
     ax.plot([x], [y], [z], "o", markersize=10, label=joint)
 ax.legend()
