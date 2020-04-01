@@ -28,13 +28,13 @@ def Zrot(a):
 
 
 def rotation_matrix(angles):
-    # angles = angles * np.pi / 180
+    angles = angles * np.pi / 180
     z, x, y = angles[0], angles[1], angles[2]
-    # R = Yrot(y).dot(Xrot(x).dot(Zrot(z)))
-    # R = Yrot(y).T.dot(Xrot(x).T.dot(Zrot(z).T))
-    # R = Zrot(z).dot(Xrot(x).dot(Yrot(y)))
     R = np.eye(4)
-    R[:3, :3] = Zrot(z).T.dot(Xrot(x).T.dot(Yrot(y).T))
+    # R[:3, :3] = Yrot(y).T.dot(Xrot(x).T.dot(Zrot(z).T))
+    # R[:3, :3] = Yrot(y).dot(Xrot(x).dot(Zrot(z)))
+    # R[:3, :3] = Zrot(z).T.dot(Xrot(x).T.dot(Yrot(y).T))
+    R[:3, :3] = Zrot(z).dot(Xrot(x).dot(Yrot(y)))
     return R
 
 
@@ -52,10 +52,10 @@ def add_offset(segment, cumdict, t):
 
         v = segment.offset[:, None]
         R = rotation_matrix(motion[t, joint_idx[joint]])
-
         T = translation_matrix(v)
         M = T.dot(R)
 
+        # breakpoint()
         M = Mprev.dot(M)
         position = M.dot(hom_unit)[:3]
         cumdict[joint] = (M, position)
@@ -103,34 +103,36 @@ all_joints = [
     "left_humerus",
     "left_radius",
 ]
+
 lst = []
 for t in range(len(motion)):
     cd = add_offset(skeleton[0], {}, t)
     c3d = np.array([cd[k][1][:3].T for k in all_joints]).flatten()
-    lst.append(c3d / 20)
+    lst.append(c3d)
 P = np.array(lst)
 
 round3 = partial(round, ndigits=3)
+scale = lambda x: x / 10
+process = lambda x: str(round3(scale(x)))
 s = ""
 for line in P:
     for _ in range(1):
-        s += ";".join(map(str, map(round3, list(line))))
+        s += ";".join(map(process, list(line)))
         s = s + "\n"
 fn = "path.txt"
 with open(fn, "w") as fo:
     fo.write(s)
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection="3d")
-
-ax.axis("equal")
-
-joint_idx = {s: slice((j + 0) * 3, (j + 1) * 3) for j, s in enumerate(all_joints)}
-for joint in all_joints:
-    x, y, z = P[20, joint_idx[joint]]
-    ax.plot([x], [y], [z], "o", markersize=10, label=joint)
-ax.legend()
-plt.show()
+# import matplotlib.pyplot as plt
+# from mpl_toolkits.mplot3d import Axes3D
+#
+# selected_idx = {s: slice((j + 0) * 3, (j + 1) * 3)
+#                 for j, s in enumerate(all_joints)}
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection="3d")
+# ax.axis("equal")
+# for joint in all_joints:
+#     x, y, z = P[0, selected_idx[joint]]
+#     ax.plot([x], [y], [z], "o", markersize=10, label=joint)
+# ax.legend()
+# plt.show()

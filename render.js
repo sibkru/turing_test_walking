@@ -153,7 +153,7 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     const fieldOfView = 45 * Math.PI / 180;   // in radians
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
-    const zFar = 100.0;
+    const zFar = 200.0;
     const projectionMatrix = mat4.create();
 
     // note: glmatrix.js always has the first argument
@@ -217,9 +217,11 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     // the center of the scene.
     const n_points = lines[0].length/3
     for (var j = 0; j < n_points; ++j) {
-        x = lines[t%lines.length][j]
-        y = lines[t%lines.length][j+1]
-        z = lines[t%lines.length][j+2] - 16
+        x = lines[t%lines.length][3*j]
+        y = lines[t%lines.length][3*j+1]
+        z = lines[t%lines.length][3*j+2]
+        // console.log([x, y, z])
+        // debugger;
         const modelViewMatrix = createModelViewMatrix([x,y,z]);
 
         gl.uniformMatrix4fv(
@@ -305,6 +307,20 @@ function createModelViewMatrix(translation) {
     // start drawing the square.
     mat4.translate(modelViewMatrix,     // destination matrix
                    modelViewMatrix,     // matrix to translate
+                   [0, 0, -50]);  // amount to translate
+
+    mat4.rotate(modelViewMatrix,
+        modelViewMatrix,
+        0.5,
+        [1, 0, 0]);
+
+    mat4.rotate(modelViewMatrix,
+        modelViewMatrix,
+        squareRotation * .7,
+        [0, 1, 0]);
+
+    mat4.translate(modelViewMatrix,     // destination matrix
+                   modelViewMatrix,     // matrix to translate
                    translation);  // amount to translate
 
     mat4.rotate(modelViewMatrix,
@@ -314,6 +330,6 @@ function createModelViewMatrix(translation) {
 
     mat4.scale(modelViewMatrix,
                modelViewMatrix,
-               [0.1, 0.1, 0.1]);
+               [0.25, 0.25, 0.25]);
     return modelViewMatrix;
 }
