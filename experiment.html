@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Experiment</title>
+    <script src="render.js"></script>
+    <script src="webgl-utils.js"></script>
+    <script src="gl-matrix.js"></script>
+    <script src="jspsych-6.1.0/jspsych.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/perceptual-movement-prediction.js"></script>
+     <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+  </head>
+  <body>
+  </body>
+  <script>
+
+    function saveData(name, data){
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'write_data.php'); // 'write_data.php' is the path to the php file described above.
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({filename: name, filedata: data}));
+    }
+
+
+    /* create timeline */
+    var timeline = [];
+
+    /* define welcome message trial */
+    var welcome = {
+      type: "html-keyboard-response",
+      stimulus: "Welcome to the experiment. Press any key to begin."
+    };
+    timeline.push(welcome);
+
+    /* define instructions trial */
+    var instructions = {
+        type: "html-keyboard-response",
+        stimulus: "<p>In this experiment, you have to predict continuations of movements.</p>",
+        post_trial_gap: 1000
+    };
+    timeline.push(instructions);
+
+    /* test trials */
+
+    var test_stimuli = [
+      { stimulus: "img/blue.png", data: { test_part: 'test', correct_response: 'f' } },
+      { stimulus: "img/orange.png", data: { test_part: 'test', correct_response: 'j' } }
+    ];
+
+    var fixation = {
+      type: 'html-keyboard-response',
+      stimulus: '<div style="font-size:60px;">+</div>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: function(){
+        return jsPsych.randomization.sampleWithoutReplacement([250, 500, 750, 1000, 1250, 1500, 1750, 2000], 1)[0];
+      },
+      data: {test_part: 'fixation'}
+    }
+
+    var trial = {
+        type: "perceptual-movement-prediction",
+    }
+    timeline.push(trial);
+
+    /* define debrief */
+
+    var debrief_block = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Thank you!</p>"
+    };
+    timeline.push(debrief_block);
+
+    // call the saveData function after the experiment is over
+    /* start the experiment */
+
+    body = document.createElement('body')
+    document.documentElement.appendChild(body);
+    document.querySelector('html').style.height = '100%';
+    document.querySelector('body').style.margin = '0px';
+    document.querySelector('body').style.height = '100%';
+    document.querySelector('body').style.width = '100%';
+    document.querySelector('body').style.backgroundColor = 'green';
+    // canvas = document.createElement('canvas');
+    // canvas.setAttribute("id", "glcanvas")
+    // body.appendChild(canvas);
+    // document.querySelector('body').appendChild(canvas)
+    var display_element = document.querySelector('body');
+
+    jsPsych.init({
+        // TODO: set display_element to canvas which will contain glcanvas?
+        display_element: display_element,
+        timeline: timeline,
+        // on_finish: function() {
+        //   jsPsych.data.displayData();
+        // }
+        on_finish: function(){ 
+          saveData("experiment_data", jsPsych.data.get().csv())
+          }
+    });
+  </script>
+</html>

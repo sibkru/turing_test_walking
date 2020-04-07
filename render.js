@@ -8,11 +8,22 @@ for (var j = 0; j < lines.length; ++j){
     lines[j] = lines[j].split(";").map(parseFloat)
 }
 
-main();
+// main();
+function setupCanvas() {
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('id', 'glcanvas');
+    canvas.width = 640;
+    canvas.height = 480;
+    canvas.setAttribute("z-index", 9999);
+    document.getElementById('jspsych-content').appendChild(canvas);
+}
 
 function main() {
 
+
     const canvas = document.querySelector('#glcanvas');
+    // const canvas = document.getElementById('glcanvas');
+
     // Initialize the GL context
     const gl = canvas.getContext('webgl');
 
@@ -74,10 +85,13 @@ function main() {
         now *= 0.001;
         const deltaTime = now - then;
         then = now;
+        console.log(now)
 
         // Draw the scene
         drawScene(gl, programInfo, buffers, deltaTime);
-        requestAnimationFrame(render);
+        if (now < 10){
+            requestAnimationFrame(render);
+        }
     }
     requestAnimationFrame(render);
 }
@@ -220,8 +234,6 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
         x = lines[t%lines.length][3*j]
         y = lines[t%lines.length][3*j+1]
         z = lines[t%lines.length][3*j+2]
-        // console.log([x, y, z])
-        // debugger;
         const modelViewMatrix = createModelViewMatrix([x,y,z]);
 
         gl.uniformMatrix4fv(
