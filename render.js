@@ -2,7 +2,8 @@ var squareRotation = 0.0;
 var t = 0;
 var frame = 0;
 
-const path = loadFile('path.txt')
+const path = loadFile('bvh/pass-bottle-training0.txt')
+// const path = loadFile('path.txt')
 const lines = path.split("\n")
 for (var j = 0; j < lines.length; ++j){
     lines[j] = lines[j].split(";").map(parseFloat)

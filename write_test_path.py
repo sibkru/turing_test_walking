@@ -31,9 +31,6 @@ def rotation_matrix(angles):
     angles = angles * np.pi / 180
     z, x, y = angles[0], angles[1], angles[2]
     R = np.eye(4)
-    # R[:3, :3] = Yrot(y).T.dot(Xrot(x).T.dot(Zrot(z).T))
-    # R[:3, :3] = Yrot(y).dot(Xrot(x).dot(Zrot(z)))
-    # R[:3, :3] = Zrot(z).T.dot(Xrot(x).T.dot(Yrot(y).T))
     R[:3, :3] = Zrot(z).dot(Xrot(x).dot(Yrot(y)))
     return R
 
@@ -44,43 +41,41 @@ def translation_matrix(v):
     return T
 
 
-def add_offset(segment, cumdict, t):
-    if segment.parent:
-        parent = segment.parent.name
-        joint = segment.name
-        Mprev, pos = cumdict[parent]
+class MotionProcesser:
+    def __init__(self, skeleton, motion):
+        self.motion = motion
+        self.joint_idx = {s.name: slice((j + 1) * 3, (j + 2) * 3) for j, s in enumerate(skeleton)}
 
-        v = segment.offset[:, None]
-        R = rotation_matrix(motion[t, joint_idx[joint]])
-        T = translation_matrix(v)
-        M = T.dot(R)
+    def add_offset(self, segment, cumdict, t):
+        pose = self.motion[t]
+        if segment.parent:
+            parent = segment.parent.name
+            joint = segment.name
+            Mprev, pos = cumdict[parent]
 
-        # breakpoint()
-        M = Mprev.dot(M)
-        position = M.dot(hom_unit)[:3]
-        cumdict[joint] = (M, position)
-    else:
-        v = motion[t, :3]
-        R = rotation_matrix(motion[t, joint_idx["pelvis"]])
-        T = translation_matrix(v)
-        M = T.dot(R)
-        position = M.dot(hom_unit)[:3]
-        cumdict["pelvis"] = (M, position)
+            v = segment.offset[:, None]
+            R = rotation_matrix(pose[self.joint_idx[joint]])
+            T = translation_matrix(v)
+            M = T.dot(R)
 
-    if segment.end_site is not None:
+            M = Mprev.dot(M)
+            position = M.dot(hom_unit)[:3]
+            cumdict[joint] = (M, position)
+        else:
+            v = pose[:3]
+            R = rotation_matrix(pose[self.joint_idx["pelvis"]])
+            T = translation_matrix(v)
+            M = T.dot(R)
+            position = M.dot(hom_unit)[:3]
+            cumdict["pelvis"] = (M, position)
+
+        if segment.end_site is not None:
+            return cumdict
+
+        for child in segment.children:
+            cumdict = {**cumdict, **self.add_offset(child, cumdict, t)}
         return cumdict
 
-    for child in segment.children:
-        cumdict = {**cumdict, **add_offset(child, cumdict, t)}
-    return cumdict
-
-
-skeleton = bvh.parse_bvh(bvh.read_file("final.bvh"))
-joints, pelvis = motion = bvh.read_bvh_motion("final.bvh")
-motion = np.concatenate((pelvis, joints), axis=1)
-
-joint_idx = {s.name: slice((j + 1) * 3, (j + 2) * 3) for j, s in enumerate(skeleton)}
-skdict = {s.name: s for s in skeleton}
 
 all_joints = [
     "pelvis",
@@ -104,35 +99,50 @@ all_joints = [
     "left_radius",
 ]
 
-lst = []
-for t in range(len(motion)):
-    cd = add_offset(skeleton[0], {}, t)
-    c3d = np.array([cd[k][1][:3].T for k in all_joints]).flatten()
-    lst.append(c3d)
-P = np.array(lst)
-
 round3 = partial(round, ndigits=3)
 scale = lambda x: x / 10
 process = lambda x: str(round3(scale(x)))
-s = ""
-for line in P:
-    for _ in range(1):
-        s += ";".join(map(process, list(line)))
-        s = s + "\n"
-fn = "path.txt"
-with open(fn, "w") as fo:
-    fo.write(s)
 
-# import matplotlib.pyplot as plt
-# from mpl_toolkits.mplot3d import Axes3D
-#
-# selected_idx = {s: slice((j + 0) * 3, (j + 1) * 3)
-#                 for j, s in enumerate(all_joints)}
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection="3d")
-# ax.axis("equal")
-# for joint in all_joints:
-#     x, y, z = P[0, selected_idx[joint]]
-#     ax.plot([x], [y], [z], "o", markersize=10, label=joint)
-# ax.legend()
-# plt.show()
+def convert_bvh(fn_in, fn_out='path.txt'):
+    skeleton = bvh.parse_bvh(bvh.read_file(fn_in))
+    skdict = {s.name: s for s in skeleton}
+
+    joints, pelvis = bvh.read_bvh_motion("final.bvh")
+    motion = np.concatenate((pelvis, joints), axis=1)
+
+    mp = MotionProcesser(skeleton, motion)
+
+    lst = []
+    for t in range(len(motion)):
+        cd = mp.add_offset(skeleton[0], {}, t)
+        c3d = np.array([cd[k][1][:3].T for k in all_joints]).flatten()
+        lst.append(c3d)
+    P = np.array(lst)
+    s = ""
+    for line in P:
+        for _ in range(1):
+            s += ";".join(map(process, list(line)))
+            s = s + "\n"
+    with open(fn_out, "w") as fo:
+        fo.write(s)
+
+
+if __name__ == '__main__':
+    from glob import glob
+
+    for fn in glob('bvh/*.bvh'):
+        convert_bvh(fn, fn.split('.')[0]+'.txt')
+
+    # import matplotlib.pyplot as plt
+    # from mpl_toolkits.mplot3d import Axes3D
+    #
+    # selected_idx = {s: slice((j + 0) * 3, (j + 1) * 3)
+    #                 for j, s in enumerate(all_joints)}
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111, projection="3d")
+    # ax.axis("equal")
+    # for joint in all_joints:
+    #     x, y, z = P[0, selected_idx[joint]]
+    #     ax.plot([x], [y], [z], "o", markersize=10, label=joint)
+    # ax.legend()
+    # plt.show()
