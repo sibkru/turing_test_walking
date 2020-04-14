@@ -1,13 +1,6 @@
-var squareRotation = 0.0;
-var t = 0;
-var frame = 0;
-
-const path = loadFile('bvh/pass-bottle-training0.txt')
-// const path = loadFile('path.txt')
-const lines = path.split("\n")
-for (var j = 0; j < lines.length; ++j){
-    lines[j] = lines[j].split(";").map(parseFloat)
-}
+// var squareRotation = 0.0;
+// var t = 0;
+// var frame = 0;
 
 // main();
 function setupCanvas() {
@@ -19,7 +12,18 @@ function setupCanvas() {
     document.getElementById('jspsych-content').appendChild(canvas);
 }
 
-function main() {
+function main(fn) {
+
+    squareRotation = 0.0;
+    t = 0;
+    frame = 0;
+
+    const path = loadFile(fn)
+    // const path = loadFile('path.txt')
+    lines = path.split("\n")
+    for (var j = 0; j < lines.length; ++j){
+        lines[j] = lines[j].split(";").map(parseFloat)
+    }
 
 
     const canvas = document.querySelector('#glcanvas');
