@@ -104,10 +104,11 @@ scale = lambda x: x / 10
 process = lambda x: str(round3(scale(x)))
 
 def convert_bvh(fn_in, fn_out='path.txt'):
+    print(fn_in)
     skeleton = bvh.parse_bvh(bvh.read_file(fn_in))
     skdict = {s.name: s for s in skeleton}
 
-    joints, pelvis = bvh.read_bvh_motion("final.bvh")
+    joints, pelvis = bvh.read_bvh_motion(fn_in)
     motion = np.concatenate((pelvis, joints), axis=1)
 
     mp = MotionProcesser(skeleton, motion)
