@@ -57,15 +57,20 @@
       },
       data: {test_part: 'fixation'}
     }
+    timeline.push(fixation);
 
     var trial = {
         type: "perceptual-movement-prediction",
-        stimulus: "bvh/pass-bottle-training1.txt"
+        stimulus: "bvh/pass-bottle-training1.txt",
+        on_start: setupCanvas,
+        on_finish: minimizeCanvas
     }
     timeline.push(trial);
+    timeline.push(fixation);
     var trial = {
         type: "perceptual-movement-prediction",
-        stimulus: "bvh/pass-bottle-hold-training1.txt"
+        stimulus: "bvh/pass-bottle-hold-training1.txt",
+        on_start: setupCanvas
     }
     timeline.push(trial);
 
@@ -77,20 +82,7 @@
     };
     timeline.push(debrief_block);
 
-    // call the saveData function after the experiment is over
-    /* start the experiment */
-
-    body = document.createElement('body')
-    document.documentElement.appendChild(body);
-    document.querySelector('html').style.height = '100%';
-    document.querySelector('body').style.margin = '0px';
-    document.querySelector('body').style.height = '100%';
-    document.querySelector('body').style.width = '100%';
-    var display_element = document.querySelector('body');
-
     jsPsych.init({
-        // TODO: set display_element to canvas which will contain glcanvas?
-        display_element: display_element,
         timeline: timeline,
         // on_finish: function() {
         //   jsPsych.data.displayData();

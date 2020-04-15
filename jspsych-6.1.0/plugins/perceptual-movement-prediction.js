@@ -14,12 +14,15 @@ jsPsych.plugins['perceptual-movement-prediction'] = (function() {
     }
 
     plugin.trial = function(display_element, trial){
-        setupCanvas();
         console.log(trial.stimulus);
         main(trial.stimulus);
         jsPsych.pluginAPI.setTimeout(function() {
-            jsPsych.finishTrial();
+            console.log(trial.stimulus);
+            main(trial.stimulus);
         }, 7000);
+        jsPsych.pluginAPI.setTimeout(function() {
+            jsPsych.finishTrial();
+        }, 14000);
     }
 
     return plugin;

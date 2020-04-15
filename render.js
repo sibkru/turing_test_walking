@@ -12,6 +12,12 @@ function setupCanvas() {
     document.getElementById('jspsych-content').appendChild(canvas);
 }
 
+function minimizeCanvas() {
+    const canvas = document.getElementById('glcanvas')
+    canvas.width = 40;
+    canvas.height = 80;
+}
+
 function main(fn) {
 
     squareRotation = 0.0;
@@ -85,16 +91,16 @@ function main(fn) {
     // objects we'll be drawing.
     const buffers = initBuffers(gl);
 
-    var then = 0;
+    var then = performance.now()*0.001;
     function render(now) {
         now *= 0.001;
         const deltaTime = now - then;
         then = now;
-        console.log(now)
+        console.log(t, now)
 
         // Draw the scene
         drawScene(gl, programInfo, buffers, deltaTime);
-        if (now < 10){
+        if (t < lines.length) {
             requestAnimationFrame(render);
         }
     }
