@@ -10,19 +10,22 @@ jsPsych.plugins['perceptual-movement-prediction'] = (function() {
                 default: null,
                 description: 'filename.'
             }
-        }
+        },
+        choices: {
+            type: jsPsych.plugins.parameterType.KEYCODE,
+            pretty_name: 'Choices',
+            array: true,
+            default: jsPsych.ALL_KEYS,
+            description: 'The keys the subject is allowed to press to respond to the stimulus.'
+        },
     }
 
     plugin.trial = function(display_element, trial){
         console.log(trial.stimulus);
         main(trial.stimulus);
         jsPsych.pluginAPI.setTimeout(function() {
-            console.log(trial.stimulus);
-            main(trial.stimulus);
-        }, 7000);
-        jsPsych.pluginAPI.setTimeout(function() {
             jsPsych.finishTrial();
-        }, 14000);
+        }, 4000);
     }
 
     return plugin;
