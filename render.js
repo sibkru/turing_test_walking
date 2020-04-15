@@ -18,17 +18,34 @@ function minimizeCanvas() {
     canvas.height = 80;
 }
 
-function main(fn) {
+function main(trial) {
 
     squareRotation = 0.0;
     t = 0;
     frame = 0;
 
-    const path = loadFile(fn)
+    const train = loadFile(trial.fn_train).split('\n');
+    path1 = train
+    if (trial.natural){
+        path2 = train;
+    } else {
+        const model = loadFile(trial.fn).split('\n');
+        path2 = model;
+    }
+
+    const dofs = path1[0].split(";").length
+    // const path = loadFile(fn)
     // const path = loadFile('path.txt')
-    lines = path.split("\n")
-    for (var j = 0; j < lines.length; ++j){
-        lines[j] = lines[j].split(";").map(parseFloat)
+    // lines = path.split("\n")
+    lines = [];
+    for (var j = 0; j < path1.length; ++j){
+        if (j < trial.occ_start) {
+            lines.push(path1[j].split(";").map(parseFloat));
+        } else if (j > trial.occ_end) {
+            lines.push(path2[j].split(";").map(parseFloat));
+        } else {
+            lines.push(new Array(dofs).fill(0.0));
+        }
     }
 
 
@@ -39,6 +56,7 @@ function main(fn) {
     const gl = canvas.getContext('webgl');
 
     if (!gl) {
+        debugger;
         alert('Unable to initialize WebGL. Your browser or machine may not support it.');
         return;
     }

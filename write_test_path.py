@@ -131,7 +131,9 @@ def convert_bvh(fn_in, fn_out='path.txt'):
 if __name__ == '__main__':
     from glob import glob
 
-    for fn in glob('bvh/*.bvh'):
+    # for fn in glob('bvh/*.bvh'):
+    #     convert_bvh(fn, fn.split('.')[0]+'.txt')
+    for fn in glob('bvh/generated/*/*.bvh'):
         convert_bvh(fn, fn.split('.')[0]+'.txt')
 
     # import matplotlib.pyplot as plt

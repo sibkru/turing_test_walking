@@ -58,7 +58,7 @@ lst = [(fn, get_train_fn(fn, hold), conds[c], order)
 
 s = ''
 for fn, fn_train, (a, b), o in lst:
-    s += fn + ';'
+    s += fn.split('.')[0] + '.txt' + ';'
     s += fn_train + ';'
     s += str(a) + ';'
     s += str(b) + ';'
