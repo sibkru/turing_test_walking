@@ -24,13 +24,14 @@ function main(trial) {
     t = 0;
     frame = 0;
 
-    const train = loadFile(trial.fn_train).split('\n');
+    var train = loadFile(trial.fn_train).split('\n');
     path1 = train
+    console.log(trial)
     if (trial.natural){
-        path2 = train;
+        var path2 = train;
     } else {
-        const model = loadFile(trial.fn).split('\n');
-        path2 = model;
+        var model = loadFile(trial.fn).split('\n');
+        var path2 = model;
     }
 
     const dofs = path1[0].split(";").length
@@ -109,19 +110,18 @@ function main(trial) {
     // objects we'll be drawing.
     const buffers = initBuffers(gl);
 
-    var then = performance.now()*0.001;
+    // debugger;
     function render(now) {
         now *= 0.001;
-        const deltaTime = now - then;
-        then = now;
-        console.log(t, now)
+        const deltaTime = Math.max(0, now - then);
+        // then = now;
+        // console.log(t, deltaTime)
 
         // Draw the scene
         drawScene(gl, programInfo, buffers, deltaTime);
-        if (t < lines.length) {
-            requestAnimationFrame(render);
-        }
+        requestAnimationFrame(render);
     }
+    var then = performance.now()*0.001;
     requestAnimationFrame(render);
 }
 
@@ -260,9 +260,14 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     // the center of the scene.
     const n_points = lines[0].length/3
     for (var j = 0; j < n_points; ++j) {
-        x = lines[t%lines.length][3*j]
-        y = lines[t%lines.length][3*j+1]
-        z = lines[t%lines.length][3*j+2]
+        t_idx = parseInt(deltaTime * 24)
+        console.log(t_idx)
+        if (t_idx > lines.length) {
+            console.log('out of framees')
+        }
+        x = lines[t_idx][3*j]
+        y = lines[t_idx][3*j+1]
+        z = lines[t_idx][3*j+2]
         const modelViewMatrix = createModelViewMatrix([x,y,z]);
 
         gl.uniformMatrix4fv(
@@ -277,7 +282,7 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
         }
     }
-    squareRotation += deltaTime
+    // squareRotation += deltaTime
     // console.log(deltaTime)
     frame += 1;
     if (frame % 1000000000000) {

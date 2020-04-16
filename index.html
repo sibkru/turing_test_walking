@@ -1,19 +1,141 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <title>Render Point Light Walker</title>
-        <meta charset="utf-8">
-        <link rel="stylesheet" href="webgl.css" type="text/css">
-    </head>
-    <body>
-        <canvas id="glcanvas" width=640 height=480></canvas>
-    </body>
-    <output id="list"></output>
-    <script src="gl-matrix.js"></script>
-    <script src="webgl-utils.js"></script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Experiment</title>
     <script src="render.js"></script>
-    <script>
-        // main('bvh/pass-bottle-hold-training1.txt');
-        main('bvh/pass-bottle-training1.txt');
-    </script>
+    <script src="webgl-utils.js"></script>
+    <script src="gl-matrix.js"></script>
+    <script src="jspsych-6.1.0/jspsych.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/perceptual-movement-prediction.js"></script>
+     <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+  </head>
+  <body>
+  </body>
+  <script>
+
+    function saveData(name, data){
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'write_data.php'); // 'write_data.php' is the path to the php file described above.
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({filename: name, filedata: data}));
+    }
+
+
+    /* create timeline */
+    var timeline = [];
+
+    /* define welcome message trial */
+    var welcome = {
+      type: "html-keyboard-response",
+      stimulus: "Welcome to the experiment. Press any key to begin."
+    };
+    timeline.push(welcome);
+
+    /* define instructions trial */
+    var instructions = {
+        type: "html-keyboard-response",
+        stimulus: "<p>In this experiment, you have to predict continuations of movements.</p>",
+        post_trial_gap: 1000
+    };
+    timeline.push(instructions);
+
+    /* test trials */
+
+    var test_stimuli = [
+      { stimulus: "img/blue.png", data: { test_part: 'test', correct_response: 'f' } },
+      { stimulus: "img/orange.png", data: { test_part: 'test', correct_response: 'j' } }
+    ];
+
+    var fixation = {
+      type: 'html-keyboard-response',
+      stimulus: '<div style="font-size:60px;">+</div>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: function(){
+        return jsPsych.randomization.sampleWithoutReplacement([250, 500, 750, 1000, 1250, 1500, 1750, 2000], 1)[0];
+      },
+      data: {test_part: 'fixation'}
+    }
+
+    var trials_from_file = loadFile('trials.csv')
+    var trials = trials_from_file.split("\n")
+    for (var j = 0; j < trials.length; ++j){
+        var lst = trials[j].split(";")
+        const trial = {
+            fn: lst[0],
+            fn_train: lst[1],
+            occ_start: parseInt(lst[2]),
+            occ_end: parseInt(lst[3]),
+            order: lst[4]
+        }
+        natural = {...trial};
+        natural.natural = true;
+        model = {...trial};
+        model.natural = false;
+        if (trial.order == 'training_first') {
+            trials[j] = {first: natural, second: model}
+        } else if (trial.order == 'model_first') {
+            trials[j] = {first: model, second: natural}
+        }
+    }
+
+    var trial = {
+        timeline: [
+            {
+              type: 'html-keyboard-response',
+              stimulus: '<div>First sequence</div><div style="font-size:60px;">+</div>',
+              choices: jsPsych.NO_KEYS,
+              trial_duration: 1000
+            },
+            {
+                type: "perceptual-movement-prediction",
+                stimulus: jsPsych.timelineVariable('first'),
+                on_start: setupCanvas,
+                on_finish: minimizeCanvas
+            },
+            {
+                type: 'html-keyboard-response',
+                stimulus: '<div>Second sequence</div><div style="font-size:60px;">+</div>',
+                choices: jsPsych.NO_KEYS,
+                trial_duration: 1000
+            },
+            {
+                type: "perceptual-movement-prediction",
+                stimulus: jsPsych.timelineVariable('second'),
+                on_start: setupCanvas,
+                on_finish: minimizeCanvas
+            },
+            {
+                type: 'html-keyboard-response',
+                stimulus: '<div style="font-size:60px;">First or second?</div>',
+                choices: jsPsych.ALL_KEYS,
+                data: {test_part: 'response'}
+            },
+        ],
+        timeline_variables: trials
+    }
+    timeline.push(trial)
+    timeline.push(trial)
+    timeline.push(trial)
+
+    /* define debrief */
+
+    var debrief_block = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Thank you!</p>"
+    };
+    timeline.push(debrief_block);
+
+    jsPsych.init({
+        timeline: timeline,
+        // on_finish: function() {
+        //   jsPsych.data.displayData();
+        // }
+        show_progress_bar: true,
+        on_finish: function(){ 
+          saveData("experiment_data", jsPsych.data.get().csv())
+          }
+    });
+  </script>
 </html>

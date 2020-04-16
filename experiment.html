@@ -79,7 +79,14 @@
             trials[j] = {first: model, second: natural}
         }
     }
+    var trials = jsPsych.randomization.sampleWithoutReplacement(trials, 10);
 
+    // var prepare = {
+    //     type: "perceptual-movement-prediction",
+    //     stimulus: "bvh/final.txt",
+    //     on_start: setupCanvas
+    // }
+    // timeline.push(prepare);
     var trial = {
         timeline: [
             {
@@ -92,7 +99,6 @@
                 type: "perceptual-movement-prediction",
                 stimulus: jsPsych.timelineVariable('first'),
                 on_start: setupCanvas,
-                on_finish: minimizeCanvas
             },
             {
                 type: 'html-keyboard-response',
@@ -104,19 +110,18 @@
                 type: "perceptual-movement-prediction",
                 stimulus: jsPsych.timelineVariable('second'),
                 on_start: setupCanvas,
-                on_finish: minimizeCanvas
             },
             {
                 type: 'html-keyboard-response',
                 stimulus: '<div style="font-size:60px;">First or second?</div>',
-                choices: jsPsych.ALL_KEYS,
+                choices: [49, 50], //jsPsych.ALL_KEYS,
                 data: {test_part: 'response'}
             },
         ],
-        timeline_variables: trials
+        timeline_variables: trials,
+        randomize: true,
+        trial_duration: 10000
     }
-    timeline.push(trial)
-    timeline.push(trial)
     timeline.push(trial)
 
     /* define debrief */
