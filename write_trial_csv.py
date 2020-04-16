@@ -43,7 +43,7 @@ def get_train_fn(fn, hold):
     return f'bvh/{ds}-training{hold}.txt'
 
 
-fns = glob('bvh/generated/*/*.bvh')
+fns = glob('bvh/vr_prediction_models/*/*.bvh')
 print(parse_filename(get_model_str_from_fp(fns[0])))
 
 conds = {'a': (30, 70), 'b': (10, 40),
