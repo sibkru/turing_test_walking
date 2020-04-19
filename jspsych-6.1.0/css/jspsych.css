@@ -123,3 +123,9 @@
 #jspsych-data-display {
   text-align: left;
 }
+
+#canvas {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+}

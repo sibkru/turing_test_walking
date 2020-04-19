@@ -6,10 +6,25 @@
 function setupCanvas() {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('id', 'glcanvas');
-    canvas.width = 640;
-    canvas.height = 480;
+    // canvas.width = 640;
+    // canvas.height = 480;
     canvas.setAttribute("z-index", 9999);
     document.getElementById('jspsych-content').appendChild(canvas);
+}
+
+function resize(canvas) {
+    // Lookup the size the browser is displaying the canvas.
+    var displayWidth  = canvas.clientWidth;
+    var displayHeight = canvas.clientHeight;
+
+    // Check if the canvas is not the same size.
+    if (canvas.width  != displayWidth ||
+      canvas.height != displayHeight) {
+
+    // Make the canvas the same size
+    canvas.width  = displayWidth;
+    canvas.height = displayHeight;
+    }
 }
 
 function minimizeCanvas() {
@@ -180,6 +195,7 @@ function initBuffers(gl) {
 }
 
 function drawScene(gl, programInfo, buffers, deltaTime) {
+    resize(gl.canvas)
     gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
