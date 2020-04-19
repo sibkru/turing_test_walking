@@ -21,7 +21,7 @@ to make the trial-list for the experiment.
 
 - [ ] let user submit ID
 - [ ] Check occlusion timings
-- [ ] update frames with correct frame rate
+- [X] update frames with correct frame rate
 - [ ] Reuse gl-canvas
 - [ ] Training trials
 - [ ] User instructions

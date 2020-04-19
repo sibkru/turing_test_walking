@@ -7,6 +7,7 @@
     <script src="gl-matrix.js"></script>
     <script src="jspsych-6.1.0/jspsych.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
     <script src="jspsych-6.1.0/plugins/perceptual-movement-prediction.js"></script>
      <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
@@ -28,14 +29,18 @@
 
     /* define welcome message trial */
     var welcome = {
-      type: "html-keyboard-response",
+      // type: "html-keyboard-response",
+      type: 'html-button-response',
+      choices: ['Start'], 
       stimulus: "Welcome to the experiment. Press any key to begin."
     };
     timeline.push(welcome);
 
     /* define instructions trial */
     var instructions = {
-        type: "html-keyboard-response",
+        // type: "html-keyboard-response",
+        type: "html-button-response",
+        choices: ['OK'], 
         stimulus: "<p>In this experiment, you have to predict continuations of movements.</p>",
         post_trial_gap: 1000
     };
@@ -112,9 +117,11 @@
                 on_start: setupCanvas,
             },
             {
-                type: 'html-keyboard-response',
+                // type: 'html-keyboard-response',
+                type: 'html-button-response',
                 stimulus: '<div style="font-size:60px;">First or second?</div>',
-                choices: [49, 50], //jsPsych.ALL_KEYS,
+                // choices: [49, 50], //jsPsych.ALL_KEYS,
+                choices: ['first', 'second'], //jsPsych.ALL_KEYS,
                 data: {test_part: 'response'}
             },
         ],
