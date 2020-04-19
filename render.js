@@ -114,12 +114,13 @@ function main(trial) {
     function render(now) {
         now *= 0.001;
         const deltaTime = Math.max(0, now - then);
-        // then = now;
-        // console.log(t, deltaTime)
+        t_idx = parseInt(deltaTime * 24)
 
         // Draw the scene
         drawScene(gl, programInfo, buffers, deltaTime);
-        requestAnimationFrame(render);
+        if (t_idx < lines.length-1) {
+            requestAnimationFrame(render);
+        }
     }
     var then = performance.now()*0.001;
     requestAnimationFrame(render);
@@ -262,9 +263,6 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     for (var j = 0; j < n_points; ++j) {
         t_idx = parseInt(deltaTime * 24)
         console.log(t_idx)
-        if (t_idx > lines.length) {
-            console.log('out of framees')
-        }
         x = lines[t_idx][3*j]
         y = lines[t_idx][3*j+1]
         z = lines[t_idx][3*j+2]
