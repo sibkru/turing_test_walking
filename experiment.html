@@ -69,7 +69,7 @@
             trials[j] = {first: model, second: natural}
         }
     }
-    var trials = jsPsych.randomization.sampleWithoutReplacement(trials, 10);
+    var trials = jsPsych.randomization.sampleWithoutReplacement(trials, 5);
 
     var trial = {
         timeline: [
@@ -120,7 +120,7 @@
         timeline: timeline,
         show_progress_bar: true,
         on_finish: function(){ 
-          saveData("experiment_data"+String(subject_id), jsPsych.data.get().csv())
+          saveData("experiment_data_"+String(subject_id), jsPsych.data.get().csv())
           }
     });
   </script>
