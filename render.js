@@ -45,7 +45,11 @@ function main(trial) {
     if (trial.natural){
         var path2 = train;
     } else {
-        var model = loadFile(trial.fn).split('\n');
+        var model = loadFile(trial.fn);
+        if (!model) {
+            debugger;
+        }
+        var model = model.split('\n');
         var path2 = model;
     }
 
@@ -125,7 +129,6 @@ function main(trial) {
     // objects we'll be drawing.
     const buffers = initBuffers(gl);
 
-    // debugger;
     function render(now) {
         now *= 0.001;
         const deltaTime = Math.max(0, now - then);
