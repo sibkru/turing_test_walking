@@ -45,11 +45,7 @@ function main(trial) {
     if (trial.natural){
         var path2 = train;
     } else {
-        var model = loadFile(trial.fn);
-        if (!model) {
-            debugger;
-        }
-        var model = model.split('\n');
+        var model = loadFile(trial.fn).split('\n');
         var path2 = model;
     }
 
@@ -58,10 +54,13 @@ function main(trial) {
     // const path = loadFile('path.txt')
     // lines = path.split("\n")
     lines = [];
-    for (var j = 0; j < path1.length; ++j){
+    for (var j = 0; j < path1.length-1; ++j){
         if (j < trial.occ_start) {
             lines.push(path1[j].split(";").map(parseFloat));
         } else if (j > trial.occ_end) {
+	    if (!path2[j]) {
+	        debugger;
+	    }
             lines.push(path2[j].split(";").map(parseFloat));
         } else {
             lines.push(new Array(dofs).fill(0.0));
