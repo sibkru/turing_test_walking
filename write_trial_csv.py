@@ -46,8 +46,8 @@ def get_train_fn(fn, hold):
 fns = glob('bvh/vr_prediction_models/*/*.bvh')
 print(parse_filename(get_model_str_from_fp(fns[0])))
 
-conds = {'a': (30, 70), 'b': (10, 40),
-         'c': (50, 80), 'd': (50, 70)}
+conds = {'a': (35, 55), 'b': (15, 35),
+         'c': (55, 75), 'd': (45, 65)}
 orders = ['training_first', 'model_first']
 holds = range(5)
 
