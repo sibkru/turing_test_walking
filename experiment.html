@@ -24,6 +24,12 @@
     }
 
 
+    var subject_id = jsPsych.randomization.randomID(15);
+
+    jsPsych.data.addProperties({
+      subject: subject_id
+    });
+
     /* create timeline */
     var timeline = [];
 
@@ -146,7 +152,7 @@
         // }
         show_progress_bar: true,
         on_finish: function(){ 
-          saveData("experiment_data", jsPsych.data.get().csv())
+          saveData("experiment_data"+String(subject_id), jsPsych.data.get().csv())
           }
     });
   </script>

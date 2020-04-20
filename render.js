@@ -6,8 +6,8 @@
 function setupCanvas() {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('id', 'glcanvas');
-    // canvas.width = 640;
-    // canvas.height = 480;
+    canvas.width = 640;
+    canvas.height = 480;
     canvas.setAttribute("z-index", 9999);
     document.getElementById('jspsych-content').appendChild(canvas);
 }
