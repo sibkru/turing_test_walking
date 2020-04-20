@@ -19,10 +19,10 @@ to make the trial-list for the experiment.
 
 ## TODO:
 
-- [ ] let user submit ID
+- [X] let user submit ID
 - [ ] Check occlusion timings
 - [X] update frames with correct frame rate
-- [ ] Reuse gl-canvas
+- [.] Reuse gl-canvas
 - [ ] Training trials
 - [ ] User instructions
 - [ ] Replace joint markers
