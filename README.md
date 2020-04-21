@@ -22,9 +22,9 @@ to make the trial-list for the experiment.
 - [X] let user submit ID
 - [ ] Check occlusion timings
 - [X] update frames with correct frame rate
-- [.] Reuse gl-canvas
-- [ ] Training trials
-- [ ] User instructions
+- [a] Reuse gl-canvas
+- [a] Training trials
+- [X] User instructions
 - [X] Replace joint markers
 - [X] fix camera orientation
 

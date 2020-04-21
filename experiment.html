@@ -36,7 +36,7 @@
       // type: "html-keyboard-response",
       type: 'html-button-response',
       choices: ['Start'], 
-      stimulus: "Welcome to the experiment. Press any key to begin."
+      stimulus: "Welcome to the experiment. Press `Start` to begin."
     };
     timeline.push(welcome);
 
@@ -44,7 +44,17 @@
         // type: "html-keyboard-response",
         type: "html-button-response",
         choices: ['OK'], 
-        stimulus: "<p>In this experiment, you have to predict continuations of movements.</p>",
+        stimulus: `
+        <p>In this experiment, you have to rate continuations of movements.</p>
+        <p></p>
+        <p>For this you will see two movement sequences in each trial.</p>
+        <p>Each sequence starts with the same lead-in movement, followed by occlusion.</p>
+        <p>After occlusion, each sequence presents a different continuation of the lead-in movement.</p>
+        <p></p>
+        <p>Please remember the sequence where the lead-in and continuation fit together naturally.</p>
+        <p>You can choose the sequence by clicking the corresponding button.</p>
+        <p></p>
+        `,
         post_trial_gap: 1000
     };
     timeline.push(instructions);
