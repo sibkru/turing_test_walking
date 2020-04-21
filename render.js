@@ -1,8 +1,3 @@
-// var squareRotation = 0.0;
-// var t = 0;
-// var frame = 0;
-
-// main();
 function setupCanvas() {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('id', 'glcanvas');
@@ -304,17 +299,6 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     if (frame % 1000000000000) {
         t += 1
     }
-}
-
-function loadFile(filePath) {
-    var result = null;
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", filePath, false);
-    xmlhttp.send();
-    if (xmlhttp.status==200) {
-        result = xmlhttp.responseText;
-    }
-    return result;
 }
 
 function createCube(center) {
