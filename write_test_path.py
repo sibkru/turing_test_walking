@@ -104,7 +104,6 @@ scale = lambda x: x / 10
 process = lambda x: str(round3(scale(x)))
 
 def convert_bvh(fn_in, fn_out='path.txt'):
-    print(fn_in)
     skeleton = bvh.parse_bvh(bvh.read_file(fn_in))
     skdict = {s.name: s for s in skeleton}
 
@@ -130,11 +129,22 @@ def convert_bvh(fn_in, fn_out='path.txt'):
 
 if __name__ == '__main__':
     from glob import glob
+    import os
 
     for fn in glob('bvh/*.bvh'):
-        convert_bvh(fn, fn.split('.')[0]+'.txt')
+        out_fn = fn.split('.')[0]+'.txt'
+        if os.path.exists(out_fn):
+            print(out_fn, 'exists, skipping.')
+        else:
+            print('converting', out_fn)
+            convert_bvh(fn, out_fn)
     for fn in glob('bvh/vr_prediction_models/*/*.bvh'):
-        convert_bvh(fn, fn.split('.')[0]+'.txt')
+        out_fn = fn.split('.')[0]+'.txt'
+        if os.path.exists(out_fn):
+            print(out_fn, 'exists, skipping.')
+        else:
+            print('converting', out_fn)
+            convert_bvh(fn, out_fn)
 
     # import matplotlib.pyplot as plt
     # from mpl_toolkits.mplot3d import Axes3D
