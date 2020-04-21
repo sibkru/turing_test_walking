@@ -71,7 +71,7 @@ function createTrajectory(trial) {
 	    }
             lines.push(path2[j].split(";").map(parseFloat));
         } else {
-            lines.push(new Array(dofs).fill(0.0));
+            lines.push(new Array(dofs).fill(-1000.0));
         }
     }
     return lines
@@ -80,7 +80,7 @@ function createTrajectory(trial) {
 function setupCanvas() {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('id', 'glcanvas');
-    canvas.width = 640;
+    canvas.width = 440;
     canvas.height = 480;
     canvas.setAttribute("z-index", 9999);
     document.getElementById('jspsych-content').appendChild(canvas);

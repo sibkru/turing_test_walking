@@ -1,11 +1,6 @@
 function main(trial) {
 
     lines = createTrajectory(trial);
-    // var train = loadFile('bvh/pass-bottle-hold-training1.txt').split('\n');
-    // lines = [];
-    // for (var j = 0; j < train.length-1; ++j){
-    //     lines.push(train[j].split(";").map(parseFloat));
-    // }
     const canvas = document.querySelector('#glcanvas');
     const gl = canvas.getContext('webgl');
     if (!gl) {

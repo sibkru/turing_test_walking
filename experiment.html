@@ -99,7 +99,8 @@
             {
                 // type: 'html-keyboard-response',
                 type: 'html-button-response',
-                stimulus: '<div style="font-size:60px;">First or second?</div>',
+                // stimulus: '<div style="font-size:60px;">First or second?</div>',
+                stimulus: 'Which sequence did you perceive as more natural?',
                 // choices: [49, 50], //jsPsych.ALL_KEYS,
                 choices: ['first', 'second'], //jsPsych.ALL_KEYS,
                 data: {test_part: 'response'}
@@ -107,7 +108,7 @@
         ],
         timeline_variables: trials,
         randomize: true,
-        trial_duration: 10000
+        // trial_duration: 10000
     }
     timeline.push(trial)
 

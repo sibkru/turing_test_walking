@@ -25,6 +25,6 @@ to make the trial-list for the experiment.
 - [.] Reuse gl-canvas
 - [ ] Training trials
 - [ ] User instructions
-- [ ] Replace joint markers
-- [ ] fix camera orientation
+- [X] Replace joint markers
+- [X] fix camera orientation
 
