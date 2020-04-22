@@ -38,8 +38,10 @@ def available_condition(fn, c):
         return True
 
 
-def get_train_fn(fn, hold):
-    ds = parse_filename(fn)['dataset']
+def get_train_fn(fn):
+    d = parse_filename(fn)
+    ds = d['dataset']
+    hold = d['hold']
     return f'bvh/{ds}-training{hold}.txt'
 
 
@@ -51,9 +53,9 @@ conds = {'a': (35, 55), 'b': (15, 35),
 orders = ['training_first', 'model_first']
 holds = range(5)
 
-lst = [(fn, get_train_fn(fn, hold), conds[c], order)
-       for fn, c, hold, order
-       in it.product(fns, conds, holds, orders)
+lst = [(fn, get_train_fn(fn), conds[c], order)
+       for fn, c, order
+       in it.product(fns, conds, orders)
        if available_condition(fn, c)]
 
 s = ''
