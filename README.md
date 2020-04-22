@@ -19,8 +19,13 @@ to make the trial-list for the experiment.
 
 ## TODO:
 
-- [X] let user submit ID
 - [ ] Check occlusion timings
+- [ ] make occlusion background gray
+- [ ] start sequence with button
+- [ ] add catch trials
+- [ ] display confusion rate in thank you trial
+- [X] fix completion bar
+- [X] let user submit ID
 - [X] update frames with correct frame rate
 - [a] Reuse gl-canvas
 - [a] Training trials
@@ -28,3 +33,5 @@ to make the trial-list for the experiment.
 - [X] Replace joint markers
 - [X] fix camera orientation
 
+## Check potentially buggy models
+- "bvh/vr_prediction_models/model(dmp)-dataset(return-bottle)-npsi(100)-hold(4)/final.txt"

@@ -53,6 +53,7 @@ function createTrajectory(trial) {
     var train = loadFile(trial.fn_train).split('\n');
     path1 = train
     console.log(trial)
+    console.log(trial.fn.split('/')[2])
     if (trial.natural){
         var path2 = train;
     } else {

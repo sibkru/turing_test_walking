@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Experiment</title>
+    <title>Movement Prediction Experiment</title>
     <!-- <script src="render.js"></script> -->
     <script src="render_points.js"></script>
     <script src="webgl-utils.js"></script>
@@ -75,12 +75,13 @@
         model = {...trial};
         model.natural = false;
         if (trial.order == 'training_first') {
-            trials[j] = {first: natural, second: model}
+            trials[j] = {first: natural, second: model, trial: trial}
         } else if (trial.order == 'model_first') {
-            trials[j] = {first: model, second: natural}
+            trials[j] = {first: model, second: natural, trial: trial}
         }
     }
-    var trials = jsPsych.randomization.sampleWithoutReplacement(trials, 5);
+    n_trials = 20;
+    var trials = jsPsych.randomization.sampleWithoutReplacement(trials, n_trials);
 
     var trial = {
         timeline: [
@@ -88,7 +89,12 @@
               type: 'html-keyboard-response',
               stimulus: '<div>First sequence</div><div style="font-size:60px;">+</div>',
               choices: jsPsych.NO_KEYS,
-              trial_duration: 1000
+              trial_duration: 1000,
+	      on_finish: function() {
+		  var trialidx = jsPsych.progress().current_trial_global;
+	          jsPsych.setProgressBar(trialidx / (5 * n_trials));
+	      }
+
             },
             {
                 type: "perceptual-movement-prediction",
@@ -113,27 +119,30 @@
                 stimulus: 'Which sequence did you perceive as more natural?',
                 // choices: [49, 50], //jsPsych.ALL_KEYS,
                 choices: ['first', 'second'], //jsPsych.ALL_KEYS,
-                data: {test_part: 'response'}
+	        data: {test_part: 'response', test_stimulus: jsPsych.timelineVariable('trial')}
             },
         ],
         timeline_variables: trials,
         randomize: true,
-        // trial_duration: 10000
+        on_finish: function(){ 
+          saveData("experiment_data_"+String(subject_id), jsPsych.data.get().json())
+          },
     }
     timeline.push(trial)
 
     var debrief_block = {
         type: "html-keyboard-response",
-        stimulus: "<p>Thank you!</p>"
+        stimulus: "<p>Thank you!</p>",
+        on_start: function() {
+            jsPsych.setProgressBar(1);
+        }
     };
     timeline.push(debrief_block);
 
     jsPsych.init({
         timeline: timeline,
         show_progress_bar: true,
-        on_finish: function(){ 
-          saveData("experiment_data_"+String(subject_id), jsPsych.data.get().csv())
-          }
+        auto_update_progress_bar: false
     });
   </script>
 </html>

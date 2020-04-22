@@ -21,10 +21,8 @@ jsPsych.plugins['perceptual-movement-prediction'] = (function() {
     }
 
     plugin.trial = function(display_element, trial){
-        // console.log(trial.stimulus);
         var train = loadFile(trial.stimulus.fn_train).split('\n');
         var T = train.length / 24 * 1000
-        console.log(train.length / 24 * 1000)
         main(trial.stimulus);
         jsPsych.pluginAPI.setTimeout(function() {
             jsPsych.finishTrial();
