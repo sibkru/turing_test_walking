@@ -41,6 +41,21 @@ def translation_matrix(v):
     return T
 
 
+def pair_list(skel_node, cumlist=[]):
+    if not skel_node.children:
+        return cumlist
+    else:
+        for child in skel_node.children:
+            # print(skel_node.name, child.name, cumlist)
+            # import pdb; pdb.set_trace()
+            cumlist = cumlist + pair_list(child, cumlist)[1:]
+            cumlist.append(
+                (skel_node.name, child.name)
+            )
+    return cumlist
+
+
+
 class MotionProcesser:
     def __init__(self, skeleton, motion):
         self.motion = motion
@@ -106,6 +121,12 @@ process = lambda x: str(round3(scale(x)))
 def convert_bvh(fn_in, fn_out='path.txt'):
     skeleton = bvh.parse_bvh(bvh.read_file(fn_in))
     skdict = {s.name: s for s in skeleton}
+    pairs = pair_list(skeleton[0])
+    pairs += [
+        ('right_femur_tibia', 'right_tibia_foot'),
+        ('pelvis_right_femur', 'right_femur_tibia')
+    ]
+    pairs = set(pairs)
 
     joints, pelvis = bvh.read_bvh_motion(fn_in)
     motion = np.concatenate((pelvis, joints), axis=1)
@@ -116,6 +137,11 @@ def convert_bvh(fn_in, fn_out='path.txt'):
     for t in range(len(motion)):
         cd = mp.add_offset(skeleton[0], {}, t)
         c3d = np.array([cd[k][1][:3].T for k in all_joints]).flatten()
+        # 96 entries
+        c3d = np.array([
+            np.concatenate((cd[a][1][:3].T, cd[b][1][:3].T), axis=1)
+            for a, b in pairs
+        ]).flatten()
         lst.append(c3d)
     P = np.array(lst)
     s = ""
@@ -131,15 +157,19 @@ if __name__ == '__main__':
     from glob import glob
     import os
 
+    # fn_in = 'bvh/vr_prediction_models/model(tmp)-dataset(return-bottle)-numprim(11)-hold(1)/final.bvh'
+    # skeleton = bvh.parse_bvh(bvh.read_file(fn_in))
+    # pairs = set(pair_list(skeleton[0]))
+
     for fn in glob('bvh/*.bvh'):
-        out_fn = fn.split('.')[0]+'.txt'
+        out_fn = fn.split('.')[0]+'-lines.txt'
         if os.path.exists(out_fn):
             print(out_fn, 'exists, skipping.')
         else:
             print('converting', out_fn)
             convert_bvh(fn, out_fn)
     for fn in glob('bvh/vr_prediction_models/*/*.bvh'):
-        out_fn = fn.split('.')[0]+'.txt'
+        out_fn = fn.split('.')[0]+'-lines.txt'
         if os.path.exists(out_fn):
             print(out_fn, 'exists, skipping.')
         else:

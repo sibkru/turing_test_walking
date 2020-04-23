@@ -38,14 +38,18 @@ def available_condition(fn, c):
         return True
 
 
-def get_train_fn(fn):
+def get_train_fn(fn, glprim):
     d = parse_filename(fn)
     ds = d['dataset']
     hold = d['hold']
-    return f'bvh/{ds}-training{hold}.txt'
+    return f'bvh/{ds}-training{hold}-{glprim}.txt'
 
 
-fns = glob('bvh/vr_prediction_models/*/final.txt')
+glprimitive = 'lines'
+if glprimitive == 'points':
+    fns = glob('bvh/vr_prediction_models/*/final.txt')
+elif glprimitive == 'lines':
+    fns = glob('bvh/vr_prediction_models/*/final-lines.txt')
 print(parse_filename(get_model_str_from_fp(fns[0])))
 
 conds = {'a': (35, 55), 'b': (15, 35),
@@ -53,7 +57,7 @@ conds = {'a': (35, 55), 'b': (15, 35),
 orders = ['training_first', 'model_first']
 holds = range(5)
 
-lst = [(fn, get_train_fn(fn), conds[c], order)
+lst = [(fn, get_train_fn(fn, glprimitive), conds[c], order)
        for fn, c, order
        in it.product(fns, conds, orders)
        if available_condition(fn, c)]
