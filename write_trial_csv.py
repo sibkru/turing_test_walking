@@ -52,8 +52,8 @@ elif glprimitive == 'lines':
     fns = glob('bvh/vr_prediction_models/*/final-lines.txt')
 print(parse_filename(get_model_str_from_fp(fns[0])))
 
-conds = {'a': (35, 55), 'b': (15, 35),
-         'c': (55, 75), 'd': (45, 65)}
+conds = {'a': (37, 53), 'b': (17, 33),
+         'c': (57, 73), 'd': (47, 63)}
 orders = ['training_first', 'model_first']
 holds = range(5)
 
