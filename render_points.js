@@ -121,7 +121,7 @@ function drawScene(gl, programInfo, position, t_idx){
     {
         const offset = 0;
         // const vertexCount = 19;
-        const vertexCount = 36;
+        const vertexCount = 32;
         const type = gl.UNSIGNED_SHORT;
         gl.drawArrays(gl.LINES, 0, vertexCount);
     }

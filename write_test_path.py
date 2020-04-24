@@ -127,6 +127,8 @@ def convert_bvh(fn_in, fn_out='path.txt'):
         ('pelvis_right_femur', 'right_femur_tibia')
     ]
     pairs = set(pairs)
+    pairs.remove(('spine1', 'right_manubrium'))
+    pairs.remove(('spine1', 'left_manubrium'))
 
     joints, pelvis = bvh.read_bvh_motion(fn_in)
     motion = np.concatenate((pelvis, joints), axis=1)
@@ -161,16 +163,25 @@ if __name__ == '__main__':
     # skeleton = bvh.parse_bvh(bvh.read_file(fn_in))
     # pairs = set(pair_list(skeleton[0]))
 
+    recompute = False
     for fn in glob('bvh/*.bvh'):
         out_fn = fn.split('.')[0]+'-lines.txt'
-        if os.path.exists(out_fn):
+        convert_bvh(fn, out_fn)
+        if recompute:
+            print('reconverting', out_fn)
+            convert_bvh(fn, out_fn)
+        elif os.path.exists(out_fn):
             print(out_fn, 'exists, skipping.')
         else:
             print('converting', out_fn)
             convert_bvh(fn, out_fn)
     for fn in glob('bvh/vr_prediction_models/*/*.bvh'):
         out_fn = fn.split('.')[0]+'-lines.txt'
-        if os.path.exists(out_fn):
+        convert_bvh(fn, out_fn)
+        if recompute:
+            print('reconverting', out_fn)
+            convert_bvh(fn, out_fn)
+        elif os.path.exists(out_fn):
             print(out_fn, 'exists, skipping.')
         else:
             print('converting', out_fn)
