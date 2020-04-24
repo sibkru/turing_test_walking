@@ -53,23 +53,33 @@ function createTrajectory(trial) {
     var train = loadFile(trial.fn_train).split('\n');
     path1 = train
     console.log(trial)
-    console.log(trial.fn.split('/')[2])
+    if (!trial.catch_trial) {
+        console.log(trial.fn.split('/')[2])
+    } else {
+        console.log("Catchtrial", trial.offset, trial.order)
+    }
     if (trial.natural){
         var path2 = train;
-    } else {
-        var model = loadFile(trial.fn).split('\n');
-        var path2 = model;
+    } 
+    else {
+        if (trial.catch_trial) {
+            var path2 = path1.slice(trial.offset);
+            // var path2 = path1.slice();
+            // for (var i = 0; i < trial.offset; ++i) {
+            //     path2.unshift("");
+            // }
+        } else {
+            var model = loadFile(trial.fn).split('\n');
+            var path2 = model;
+        }
     }
 
     const dofs = path1[0].split(";").length
     var lines = [];
-    for (var j = 0; j < path1.length-1; ++j){
+    for (var j = 0; j < path2.length-1; ++j){
         if (j < trial.occ_start) {
             lines.push(path1[j].split(";").map(parseFloat));
         } else if (j > trial.occ_end) {
-	    if (!path2[j]) {
-	        debugger;
-	    }
             lines.push(path2[j].split(";").map(parseFloat));
         } else {
             lines.push(new Array(dofs).fill(-1000.0));

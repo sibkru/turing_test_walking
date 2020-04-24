@@ -82,6 +82,28 @@
     }
     n_trials = 20;
     var trials = jsPsych.randomization.sampleWithoutReplacement(trials, n_trials);
+    var catch_trials_from_file = loadFile('catch_trials.csv')
+    var catch_trials = catch_trials_from_file.split("\n")
+    for (var j = 0; j < 24; ++j) {
+        var lst = catch_trials[j].split(";")
+        const trial = {
+            catch_trial: true,
+            fn_train: lst[0],
+            occ_start: parseInt(lst[1]),
+            occ_end: parseInt(lst[2]),
+            offset: parseInt(lst[3]),
+            order: lst[4]
+        }
+        natural = {...trial};
+        natural.natural = true;
+        catch_trial = {...trial};
+        catch_trial.natural = false;
+        if (trial.order == 'training_first') {
+            trials[j] = {first: natural, second: catch_trial, trial: trial}
+        } else if (trial.order == 'model_first') {
+            trials[j] = {first: catch_trial, second: natural, trial: trial}
+        }
+    }
 
     var trial = {
         timeline: [
