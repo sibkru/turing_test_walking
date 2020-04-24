@@ -51,58 +51,33 @@ elif glprimitive == 'lines':
     fns = glob('bvh/vr_prediction_models/*/final-lines.txt')
 print(parse_filename(get_model_str_from_fp(fns[0])))
 
-conds = {'a': (37, 53), 'b': (17, 33),
-         'c': (57, 73), 'd': (47, 63)}
+import segments
+timings = segments.contact_timings
 
-contact_timings = {
-    'pass-bottle-hold': {
-        'hold': [(34, 35),
-                 (32, 33),
-                 (32, 33),
-                 (38, 39),
-                 (42, 43)]
-    },
-    'pass-bottle': {
-        'hold': [(73, 91),
-                 (45, 78),
-                 (57, 85),
-                 (64, 80),
-                 (63, 77)]
-    },
-    'return-bottle': {
-        'hold': [(38, 70),
-                 (47, 72),
-                 (48, 85),
-                 (46, 72),
-                 (57, 74)]
-    },
-    'return-bottle-hold': {
-        'hold': [(65, 66),
-                 (34, 35),
-                 (39, 40),
-                 (35, 36),
-                 (35, 36)]
-    }
-}
+# conds = {'a': (37, 53), 'b': (17, 33),
+#          'c': (57, 73), 'd': (47, 63)}
+conds = ['pre', 'inter', 'post']
 
 orders = ['training_first', 'model_first']
 holds = range(5)
 
-lst = [(fn, get_train_fn(fn, glprimitive), conds[c], order)
+lst = [(fn, get_train_fn(fn, glprimitive),
+        timings[parse_filename(fn)['dataset']][c][parse_filename(fn)['hold']],
+        order)
        for fn, c, order
-       in it.product(fns, conds, orders)
-       if available_condition(parse_filename(fn)['dataset'], c)]
+       in it.product(fns, conds, orders)]
 
 datasets = ['pass-bottle-hold',
             'pass-bottle',
             'return-bottle',
             'return-bottle-hold']
-catch_conds = {'a': (37, 53), 'b': (17, 33)}
+# catch_conds = {'a': (37, 53), 'b': (17, 33)}
+shifts = [9, 16, 24]
 catch_trials = [(f'bvh/{ds}-training{hold}-{glprimitive}.txt',
-                 conds[c], order, offs)
+                 timings[ds][c][hold], order, offs)
                 for ds, hold, c, order, offs
                 in it.product(
-                    datasets, range(5), catch_conds, orders, [9, 16, 24]
+                    datasets, range(5), conds, orders, shifts
                 )
                 if available_condition(ds, c)]
 s = ''
