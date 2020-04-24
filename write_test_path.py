@@ -166,23 +166,21 @@ if __name__ == '__main__':
     recompute = False
     for fn in glob('bvh/*.bvh'):
         out_fn = fn.split('.')[0]+'-lines.txt'
-        convert_bvh(fn, out_fn)
         if recompute:
             print('reconverting', out_fn)
             convert_bvh(fn, out_fn)
         elif os.path.exists(out_fn):
-            print(out_fn, 'exists, skipping.')
+            print(out_fn.split('/')[-2], 'exists, skipping.', end=' ')
         else:
             print('converting', out_fn)
             convert_bvh(fn, out_fn)
     for fn in glob('bvh/vr_prediction_models/*/*.bvh'):
         out_fn = fn.split('.')[0]+'-lines.txt'
-        convert_bvh(fn, out_fn)
         if recompute:
             print('reconverting', out_fn)
             convert_bvh(fn, out_fn)
         elif os.path.exists(out_fn):
-            print(out_fn, 'exists, skipping.')
+            print(out_fn.split('/')[-2], 'exists, skipping.', end=' ')
         else:
             print('converting', out_fn)
             convert_bvh(fn, out_fn)

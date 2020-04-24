@@ -31,7 +31,7 @@ def get_model_str_from_fp(s: str) -> str:
 
 
 def available_condition(ds, c):
-    if ds == 'pass-bottle-hold' and c == 'c':
+    if 'hold' in ds and c == 24:
         return False
     else:
         return True
@@ -49,7 +49,7 @@ if glprimitive == 'points':
     fns = glob('bvh/vr_prediction_models/*/final.txt')
 elif glprimitive == 'lines':
     fns = glob('bvh/vr_prediction_models/*/final-lines.txt')
-print(parse_filename(get_model_str_from_fp(fns[0])))
+# print(parse_filename(get_model_str_from_fp(fns[0])))
 
 import segments
 timings = segments.contact_timings
@@ -79,7 +79,7 @@ catch_trials = [(f'bvh/{ds}-training{hold}-{glprimitive}.txt',
                 in it.product(
                     datasets, range(5), conds, orders, shifts
                 )
-                if available_condition(ds, c)]
+                if available_condition(ds, offs)]
 s = ''
 for fn_train, (a, b), o, offs in catch_trials:
     s += fn_train + ';'
@@ -88,6 +88,7 @@ for fn_train, (a, b), o, offs in catch_trials:
     s += str(offs) + ';'
     s += str(o)
     s += '\n'
+print('write catch_trial.csv')
 with open('catch_trials.csv', 'w') as fo:
     fo.write(s)
 
@@ -100,5 +101,6 @@ for fn, fn_train, (a, b), o in lst:
     s += str(o)
     s += '\n'
 
+print('write trial.csv')
 with open('trials.csv', 'w') as fo:
     fo.write(s)

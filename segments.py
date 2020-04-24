@@ -40,8 +40,9 @@ contact_timings = {
 for ds in contact_timings:
     for i, h in enumerate(contact_timings[ds]['hold']):
         sl = stimulus_lengths[f'bvh/{ds}-training{i}.bvh']
-        print(ds, i, h[1]+40, sl)
-        print(h[1]-h[0])
+        max_length = h[1]+12+16+2*7
+        # print(ds, i, max_length, sl, max_length <= sl)
+        # print(h[1]-h[0])
         mid = (h[0]+h[1])//2
         contact_timings[ds]['mid'] = mid
 
@@ -50,14 +51,14 @@ for ds in contact_timings:
         lambda h: (h[0]+h[1])//2,
         contact_timings[ds]['hold']))
     contact_timings[ds]['pre'] = list(map(
-        lambda m: (m-14, m-2),
-        contact_timings[ds]['mid']))
+        lambda m: (m[0]-19, m[0]-7),
+        contact_timings[ds]['hold']))
     contact_timings[ds]['inter'] = list(map(
         lambda m: (m-6, m+6),
         contact_timings[ds]['mid']))
     contact_timings[ds]['post'] = list(map(
-        lambda m: (m+2, m+14),
-        contact_timings[ds]['mid']))
+        lambda m: (m[1]+7, m[1]+19),
+        contact_timings[ds]['hold']))
 
 if __name__ == '__main__':
     from pprint import pprint
