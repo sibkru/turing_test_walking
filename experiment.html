@@ -24,10 +24,16 @@
     }
 
 
-    var subject_id = jsPsych.randomization.randomID(15);
-
+    sona_subject_id = GetURLParameter('subject')
+    if (!subject_id) {
+	var subject_id = jsPsych.randomization.randomID(15);
+    }
+    
+     // 'https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code=XXXX'
+     // 'https://marburg-psychology.sona-systems.com/services/SonaAPI.svc/WebstudyCredit?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code=XXXX'
     jsPsych.data.addProperties({
-      subject: subject_id
+      subject: subject_id,
+      sona: sona_subject_id
     });
 
     var timeline = [];
@@ -36,7 +42,7 @@
       // type: "html-keyboard-response",
       type: 'html-button-response',
       choices: ['Start'], 
-      stimulus: "Welcome to the experiment. Press `Start` to begin."
+      stimulus: "Welcome! Please press the button to start the experiment."
     };
     timeline.push(welcome);
 
@@ -104,9 +110,9 @@
         }
     }
 
-    n_trials = 20;
+    n_trials = 55;
     var trials = jsPsych.randomization.sampleWithoutReplacement(trials, n_trials);
-    n_catch_trials = 5;
+    n_catch_trials = 2;
     var catch_trials = jsPsych.randomization.sampleWithoutReplacement(catch_trials, n_catch_trials);
     var trials = trials.concat(catch_trials)
     n_trials = trials.length
@@ -114,13 +120,19 @@
     var trial = {
         timeline: [
             {
+                type: 'html-button-response',
+                stimulus: 'Ready?',
+                choices: ['OK!'],
+		post_trial_gap: 1000
+            },
+            {
               type: 'html-keyboard-response',
               stimulus: '<div>First sequence</div><div style="font-size:60px;">+</div>',
               choices: jsPsych.NO_KEYS,
               trial_duration: 1000,
 	      on_finish: function() {
 		  var trialidx = jsPsych.progress().current_trial_global;
-	          jsPsych.setProgressBar(trialidx / (5 * n_trials));
+	          jsPsych.setProgressBar(trialidx / (6 * n_trials));
 	      }
 
             },
@@ -153,14 +165,18 @@
         timeline_variables: trials,
         randomize_order: true,
         on_finish: function(){ 
-          saveData("experiment_data_"+String(subject_id), jsPsych.data.get().json())
+          saveData("experiment_data_"+String(sona_subject_id)+ '_' +String(subject_id), jsPsych.data.get().json())
           },
     }
     timeline.push(trial)
 
     var debrief_block = {
         type: "html-keyboard-response",
-        stimulus: "<p>Thank you!</p>",
+	stimulus: function () {
+	        // var s = "<p>Thank you! </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code="+sona_subject_id+"'>Please click here to be granted your credit points.</a>"
+		var s = "<p>Thank you! </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=379&credit_token=ebd967ad6fb74381bf0b22344ca77749&survey_code="+sona_subject_id+"'>Please click here to be granted your credit points.</a>"
+	        return s
+	},
         on_start: function() {
             jsPsych.setProgressBar(1);
         }
