@@ -62,4 +62,7 @@ for ds in contact_timings:
 
 if __name__ == '__main__':
     from pprint import pprint
+    import json
     pprint(contact_timings)
+    with open('segments.json', 'w') as fo:
+        json.dump(contact_timings, fo)
