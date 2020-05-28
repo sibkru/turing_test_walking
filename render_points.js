@@ -128,14 +128,7 @@ function drawScene(gl, programInfo, position, t_idx){
 }
 
 function initBuffers(gl) {
-    var vertices = [
-         0, 5, 0,
-        -0.5,0.5,-1.0,
-        0.0,0.5,-1.0,
-        -0.25,0.25,-1.0, 
-     ];
     var vertices = lines[0];
-    // debugger;
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER,

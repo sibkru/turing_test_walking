@@ -23,14 +23,9 @@
       xhr.send(JSON.stringify({filename: name, filedata: data}));
     }
 
-
     sona_subject_id = GetURLParameter('subject')
-    if (!subject_id) {
 	var subject_id = jsPsych.randomization.randomID(15);
-    }
     
-     // 'https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code=XXXX'
-     // 'https://marburg-psychology.sona-systems.com/services/SonaAPI.svc/WebstudyCredit?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code=XXXX'
     jsPsych.data.addProperties({
       subject: subject_id,
       sona: sona_subject_id
