@@ -52,21 +52,6 @@
             }}};
        
       
-    var instructionsEng = {
-        // type: "html-keyboard-response",
-        type: "html-button-response",
-        choices: ['OK'], 
-        stimulus: `
-        <p>In this experiment, you have to compare two movements.</p>
-        <p></p>
-        <p>For this you will see two movement sequences next to each other in a trial.</p>
-        <p>Please look at the fixation cross before every sequence</p>
-        <p>After each sequence you can choose which one appear <strong>natural</strong> for you by pressing the corresponding button.</p>
-        <p></p>
-        <p>The first trial will be only a training trial</p>
-        `,
-        post_trial_gap: 1000
-    };
       
     var instructionsGer = {
         // type: "html-keyboard-response",
@@ -85,14 +70,14 @@
     
       
     var ifEng = {
-        timeline: [instructionsEng, ready],
+        timeline: [trainingEng],
         conditional_function: function(){
             return langEng;
         }
     };
     
     var ifGer = {
-        timeline: [instructionsGer, ready],
+        timeline: [instructionsGer],
         conditional_function: function(){
             if (!langEng){
                 return true;
@@ -107,7 +92,8 @@
         stimulus: 'Ready?',
         choices: ['OK!'],
 		post_trial_gap: 1000
-    }
+    };
+   
     var bereit = {
         type: 'html-button-response',
         stimulus: 'Bereit?',
@@ -116,12 +102,26 @@
     }
     
     var fixation = {
-        type: 'html-keyboard-response',
+        type: 'html-button-response',
         stimulus: '><div style="font-size:60px;">+</div>',
         choices: jsPsych.NO_KEYS,
         trial_duration: 1000,
         }
 
+    var answer = {
+        type: 'html-button-response',                
+        stimulus: 'Which sequence did you perceive as more natural?',
+        choices: ['first', 'second'], //jsPsych.ALL_KEYS,
+    }
+    
+    var trainingEng = {
+        type: 'html-button-response',  
+        timeline: [
+            {stimulus: 'Ready?', choices: ['OK!'], post_trial_gap: 1000},
+            {stimulus: '<div style="font-size:60px;">+</div>', choices: jsPsych.NO_KEYS, trial_duration: 1000},
+            {stimulus: 'Which sequence did you perceive as more natural?', choices: ['1 for left', '2 for right']}],  
+    }
+    
 
 
 
@@ -156,7 +156,7 @@
     jsPsych.init({
         timeline: [welcome, ifEng, ifGer],
         show_progress_bar: true,
-        auto_update_progress_bar: false
+        auto_update_progress_bar: true
     });
   </script>
 </html>
