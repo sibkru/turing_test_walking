@@ -1,0 +1,162 @@
+<html>
+  <head>
+    <title>Movement Perception Experiment</title>
+    <!-- <script src="render.js"></script> -->
+    <script src="render_points.js"></script>
+    <script src="webgl-utils.js"></script>
+    <script src="gl-matrix.js"></script>
+    <script src="jspsych-6.1.0/jspsych.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/perceptual-movement-prediction.js"></script>
+     <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+  </head>
+  <body>
+  </body>
+  <script>
+    var langEng;
+      
+    function saveData(name, data){
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'write_data.php'); // 'write_data.php' is the path to the php file described above.
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({filename: name, filedata: data}));
+    }
+
+
+    sona_subject_id = GetURLParameter('subject')
+    if (!subject_id) {
+	var subject_id = jsPsych.randomization.randomID(15);
+    }
+    
+     // 'https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code=XXXX'
+     // 'https://marburg-psychology.sona-systems.com/services/SonaAPI.svc/WebstudyCredit?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code=XXXX'
+    jsPsych.data.addProperties({
+      subject: subject_id,
+      sona: sona_subject_id
+    });
+
+    var timeline = [];
+
+    var welcome = {
+        // type: "html-keyboard-response",
+        type: 'html-button-response',
+        choices: ['English', 'Deutsch'], 
+        stimulus: "<p>Welcome!<br> Please choose your language to start the experiment in the chosen language.</p><p>Willkommen!<br> Bitte wählen Sie eine Sprache um das     Experiment in der ausgewählten Sprache zu   starten</p>",
+        on_finish: function(data) {
+            // choosing language by deleting corresponding arrays in timeline
+            if(data.button_pressed == 0){
+                langEng = true;
+            } else {
+                langEng = false; 
+            }}};
+       
+      
+    var instructionsEng = {
+        // type: "html-keyboard-response",
+        type: "html-button-response",
+        choices: ['OK'], 
+        stimulus: `
+        <p>In this experiment, you have to compare two movements.</p>
+        <p></p>
+        <p>For this you will see two movement sequences next to each other in a trial.</p>
+        <p>Please look at the fixation cross before every sequence</p>
+        <p>After each sequence you can choose which one appear <strong>natural</strong> for you by pressing the corresponding button.</p>
+        <p></p>
+        <p>The first trial will be only a training trial</p>
+        `,
+        post_trial_gap: 1000
+    };
+      
+    var instructionsGer = {
+        // type: "html-keyboard-response",
+        type: "html-button-response",
+        choices: ['OK'], 
+        stimulus: `
+        <p>In diesem Experiment vergleichen Sie zwei Bewegungen miteinander.</p>
+        <p></p>
+        <p>Sie werden in jedem Testdurchlauf  zwei Bewegungssequenzen nebeneinander sehen.</p>
+        <p>Schauen Sie bitte auf das Fixationskreuz vor jeder Sequenz</p>
+        <p>Sie können nach jeder Sequenz auswählen, welche der beiden Sequenzen für Sie <strong>natürlich</strong> aussieht.</p> <p>Drücken Sie hierfür auf das entsprechende Klickfeld.</p>
+        <p>Der erste Durchgang wird ein Training sein</p>
+        `,
+        post_trial_gap: 1000
+    };
+    
+      
+    var ifEng = {
+        timeline: [instructionsEng, ready],
+        conditional_function: function(){
+            return langEng;
+        }
+    };
+    
+    var ifGer = {
+        timeline: [instructionsGer, ready],
+        conditional_function: function(){
+            if (!langEng){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    
+    var ready = {
+        type: 'html-button-response',
+        stimulus: 'Ready?',
+        choices: ['OK!'],
+		post_trial_gap: 1000
+    }
+    var bereit = {
+        type: 'html-button-response',
+        stimulus: 'Bereit?',
+        choices: ['OK!'],
+		post_trial_gap: 1000
+    }
+    
+    var fixation = {
+        type: 'html-keyboard-response',
+        stimulus: '><div style="font-size:60px;">+</div>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 1000,
+        }
+
+
+
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    jsPsych.init({
+        timeline: [welcome, ifEng, ifGer],
+        show_progress_bar: true,
+        auto_update_progress_bar: false
+    });
+  </script>
+</html>
