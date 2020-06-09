@@ -52,7 +52,16 @@
             }}};
        
       
-      
+    var instructionsEng = {
+        type: "html-button-response",
+        choices: ['OK'],
+        stimulus: `
+        <p>In this experiment, you have to compare two movements.</p><p></p> <p>For this you will see two movement sequences next to each other in a trial.</p><p>Please look at the fixation cross before every sequence</p><p>After each sequence you can choose which one appear <strong>natural</strong> for you by pressing the corresponding button.</p><p></p><p>The first trial will be only a training trial</p>
+        `,
+        choices: ['OK'], 
+        post_trial_gap: 1000
+    }  
+    
     var instructionsGer = {
         // type: "html-keyboard-response",
         type: "html-button-response",
@@ -70,7 +79,7 @@
     
       
     var ifEng = {
-        timeline: [trainingEng],
+        timeline: [instructionsEng],
         conditional_function: function(){
             return langEng;
         }
@@ -89,50 +98,75 @@
     
     var ready = {
         type: 'html-button-response',
-        stimulus: 'Ready?',
+        stimulus: '<p>Ready?</p>',
         choices: ['OK!'],
 		post_trial_gap: 1000
-    };
-   
-    var bereit = {
-        type: 'html-button-response',
-        stimulus: 'Bereit?',
-        choices: ['OK!'],
-		post_trial_gap: 1000
-    }
-    
+}
+  
     var fixation = {
-        type: 'html-button-response',
-        stimulus: '><div style="font-size:60px;">+</div>',
+        type: 'html-keyboard-response',
+        stimulus: '<div style="font-size:60px;">+</div>',
         choices: jsPsych.NO_KEYS,
         trial_duration: 1000,
-        }
-
+}
     var answer = {
         type: 'html-button-response',                
-        stimulus: 'Which sequence did you perceive as more natural?',
-        choices: ['first', 'second'], //jsPsych.ALL_KEYS,
+        stimulus: '<p>Which sequence did you perceive as more natural?</p>',
+        choices: ['1 or left', '2 or right'], //jsPsych.ALL_KEYS,
+}
+    
+    var antwort = {
+        type: 'html-button-response',                
+        stimulus: '<p>Welche Sequenz haben Sie als natürlicher empfunden?</p>',
+        choices: ['1 oder links', '2 oder rechts'], 
+}
+    
+    var ifAnswer = {
+        timeline: [answer],
+        conditional_function: function(){
+            return langEng;
+    }}
+        
+    var ifAntwort = {
+        timeline: [antwort],
+        conditional_function: function(){
+            if (!langEng){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    var startEng = {
+        type: 'html-button-response',                
+        stimulus: '<p>From now on please choose <strong>1</strong> for the <i>left sequence</i> and <strong>2</strong> for the <i>right sequence</i>.</p>' + '<p>Please click the button if you are ready.</p>',
+        choices: ['Start the experiment'], 
     }
     
-    var trainingEng = {
-        type: 'html-button-response',  
-        timeline: [
-            {stimulus: 'Ready?', choices: ['OK!'], post_trial_gap: 1000},
-            {stimulus: '<div style="font-size:60px;">+</div>', choices: jsPsych.NO_KEYS, trial_duration: 1000},
-            {stimulus: 'Which sequence did you perceive as more natural?', choices: ['1 for left', '2 for right']}],  
+    var startGer = {
+        type: 'html-button-response',                
+        stimulus: '<p>Im folgenden wählen Sie für die <i>linke Sequenz</i> die <strong>1</strong> und für die <i>rechte Sequenz</i> die <strong>2</strong> aus.</p>' + '<p>Wenn Sie nun bereit sind, dann drücken Sie bitte auf das Klickfeld.</p>',
+        choices: ['Starte das Experiment'], 
     }
     
+    var ifStartEng = {
+        timeline: [startEng],
+        conditional_function: function(){
+            return langEng;
+    }}
+        
+    var ifStartGer = {
+        timeline: [startGer],
+        conditional_function: function(){
+            if (!langEng){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 
 
-
-      
-      
-      
-      
-      
-      
-      
-      
       
       
       
@@ -142,19 +176,13 @@
       
       
     
-      
-      
-      
-      
-      
-      
       
       
       
       
       
     jsPsych.init({
-        timeline: [welcome, ifEng, ifGer],
+        timeline: [welcome, ifEng, ifGer, ready, fixation, ifAnswer, ifAntwort, ifStartEng, ifStartGer],
         show_progress_bar: true,
         auto_update_progress_bar: true
     });
