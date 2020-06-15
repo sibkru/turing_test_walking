@@ -9,6 +9,7 @@
     <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
     <script src="jspsych-6.1.0/plugins/perceptual-movement-prediction.js"></script>
+      <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
      <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
   </head>
   <body>
@@ -42,7 +43,7 @@
         // type: "html-keyboard-response",
         type: 'html-button-response',
         choices: ['English', 'Deutsch'], 
-        stimulus: "<p>Welcome!<br> Please choose your language to start the experiment in the chosen language.</p><p>Willkommen!<br> Bitte wählen Sie eine Sprache um das     Experiment in der ausgewählten Sprache zu   starten</p>",
+        stimulus: "<p>Welcome!<br> Please choose your language to start the experiment in the chosen language.</p><p>Willkommen!<br> Bitte wählen Sie eine Sprache um das Experiment in der ausgewählten Sprache zu starten</p>",
         on_finish: function(data) {
             // choosing language by deleting corresponding arrays in timeline
             if(data.button_pressed == 0){
@@ -52,123 +53,112 @@
             }}};
        
       
+   
     var instructionsEng = {
-        type: "html-button-response",
-        choices: ['OK'],
-        stimulus: `
-        <p>In this experiment, you have to compare two movements.</p><p></p> <p>For this you will see two movement sequences next to each other in a trial.</p><p>Please look at the fixation cross before every sequence</p><p>After each sequence you can choose which one appear <strong>natural</strong> for you by pressing the corresponding button.</p><p></p><p>The first trial will be only a training trial</p>
-        `,
+        type: 'instructions',
+        pages: [
+            '<p>In this experiment, you have to compare two movements.</p><p></p> <p>For this you will see two movement sequences next to each other in a trial.</p><p>Please look at the fixation cross before every sequence.</p>',
+            '<p>After each sequence you can choose which one appear <strong>natural</strong> for you by pressing the corresponding button.</p>',
+            'Choose <strong>1</strong> for the <i>left sequence</i> and <strong>2</strong> for the <i>right sequence</i>.</p>',
+            '<p>For learning purposes the first trial will be only for training.</p>'],
+        show_clickable_nav: true
+    };
+    var instructionsGer = {
+        type: 'instructions',
+        pages: [
+            '<p>In diesem Experiment vergleichen Sie zwei Bewegungen miteinander.</p><p></p><p>Sie werden in jedem Testdurchlauf  zwei Bewegungssequenzen nebeneinander sehen.</p><p>Schauen Sie bitte auf das Fixationskreuz vor jeder Sequenz.</p>',
+            '<p>Sie können nach jeder Sequenz auswählen, welche der beiden Sequenzen für Sie <strong>natürlicher</strong> aussieht.</p> <p>Drücken Sie hierfür auf das entsprechende Klickfeld.</p>',
+            '<p>Wählen Sie für die <i>linke Sequenz</i> die <strong>1</strong> und für die <i>rechte Sequenz</i> die <strong>2</strong> aus.</p>',
+            'Zu Übungszwecken wird der erste Durchgang nur eine Übung sein.'],
+        show_clickable_nav: true
+    };
+    
+  var ifEng = {
+    timeline: [instructionsEng],
+    conditional_function: function(){
+        if(langEng){
+            return true;
+        
+        } else {
+            return false;
+        }
+    }}
+  var ifGer = {
+    timeline: [instructionsGer],
+    conditional_function: function(){
+        if(!langEng){
+            return true;
+        
+        } else {
+            return false;
+        }
+    }}
+    
+    /*stimulus: function() {
+            if(langEng){   
+                return '<p>In this experiment, you have to compare two movements.</p><p></p> <p>For this you will see two movement sequences next to each other in a trial.</p><p>Please look at the fixation cross before every sequence</p><p>After each sequence you can choose which one appear <strong>natural</strong> for you by pressing the corresponding button.</p><p></p><p>The first trial will be only a training trial</p>';
+                } else {
+                return '<p>In diesem Experiment vergleichen Sie zwei Bewegungen miteinander.</p><p></p><p>Sie werden in jedem Testdurchlauf  zwei Bewegungssequenzen nebeneinander sehen.</p><p>Schauen Sie bitte auf das Fixationskreuz vor jeder Sequenz</p><p>Sie können nach jeder Sequenz auswählen, welche der beiden Sequenzen für Sie <strong>natürlich</strong> aussieht.</p> <p>Drücken Sie hierfür auf das entsprechende Klickfeld.</p><p>Der erste Durchgang wird ein Training sein</p>';
+         }},
         choices: ['OK'], 
         post_trial_gap: 1000
     }  
-    
-    var instructionsGer = {
-        // type: "html-keyboard-response",
-        type: "html-button-response",
-        choices: ['OK'], 
-        stimulus: `
-        <p>In diesem Experiment vergleichen Sie zwei Bewegungen miteinander.</p>
-        <p></p>
-        <p>Sie werden in jedem Testdurchlauf  zwei Bewegungssequenzen nebeneinander sehen.</p>
-        <p>Schauen Sie bitte auf das Fixationskreuz vor jeder Sequenz</p>
-        <p>Sie können nach jeder Sequenz auswählen, welche der beiden Sequenzen für Sie <strong>natürlich</strong> aussieht.</p> <p>Drücken Sie hierfür auf das entsprechende Klickfeld.</p>
-        <p>Der erste Durchgang wird ein Training sein</p>
-        `,
-        post_trial_gap: 1000
-    };
+    */
+
     
       
-    var ifEng = {
-        timeline: [instructionsEng],
-        conditional_function: function(){
-            return langEng;
-        }
-    };
-    
-    var ifGer = {
-        timeline: [instructionsGer],
-        conditional_function: function(){
-            if (!langEng){
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
     
     var ready = {
         type: 'html-button-response',
-        stimulus: '<p>Ready?</p>',
+        stimulus: function() {
+            if(langEng){
+                return '<p>Ready?</p>';
+            } else {
+                return '<p>Bereit?</p>';
+            }
+        },
         choices: ['OK!'],
 		post_trial_gap: 1000
-}
+    }
   
     var fixation = {
         type: 'html-keyboard-response',
         stimulus: '<div style="font-size:60px;">+</div>',
         choices: jsPsych.NO_KEYS,
         trial_duration: 1000,
-}
+    }
     var answer = {
         type: 'html-button-response',                
-        stimulus: '<p>Which sequence did you perceive as more natural?</p>',
-        choices: ['1 or left', '2 or right'], //jsPsych.ALL_KEYS,
-}
-    
-    var antwort = {
-        type: 'html-button-response',                
-        stimulus: '<p>Welche Sequenz haben Sie als natürlicher empfunden?</p>',
-        choices: ['1 oder links', '2 oder rechts'], 
-}
-    
-    var ifAnswer = {
-        timeline: [answer],
-        conditional_function: function(){
-            return langEng;
-    }}
-        
-    var ifAntwort = {
-        timeline: [antwort],
-        conditional_function: function(){
-            if (!langEng){
-                return true;
+        stimulus: function(){
+            if(langEng){
+                return '<p>Which sequence did you perceive as more natural?</p>';
             } else {
-                return false;
-            }
-        }
-    }
-    var startEng = {
-        type: 'html-button-response',                
-        stimulus: '<p>From now on please choose <strong>1</strong> for the <i>left sequence</i> and <strong>2</strong> for the <i>right sequence</i>.</p>' + '<p>Please click the button if you are ready.</p>',
-        choices: ['Start the experiment'], 
-    }
+                return '<p>Welche Sequenz haben Sie als natürlicher empfunden?</p>';
+            }},
+        choices: ['1', '2'], //jsPsych.ALL_KEYS,
+    }  
+ 
     
-    var startGer = {
-        type: 'html-button-response',                
-        stimulus: '<p>Im folgenden wählen Sie für die <i>linke Sequenz</i> die <strong>1</strong> und für die <i>rechte Sequenz</i> die <strong>2</strong> aus.</p>' + '<p>Wenn Sie nun bereit sind, dann drücken Sie bitte auf das Klickfeld.</p>',
-        choices: ['Starte das Experiment'], 
-    }
+   
     
-    var ifStartEng = {
-        timeline: [startEng],
-        conditional_function: function(){
-            return langEng;
-    }}
-        
-    var ifStartGer = {
-        timeline: [startGer],
-        conditional_function: function(){
-            if (!langEng){
-                return true;
+  
+    var start = {
+        type: 'html-button-response',                
+        stimulus: function(){
+            if(langEng){ 
+                return '<p>We hope that you unterstood the instrunctions.</p>' + '<p>Please click the button if you are ready.</p>' + '<p>If not then please reload the page for a restart.</p>';
             } else {
-                return false;
-            }
-        }
+                return '<p>Wir hoffen, dass Sie die Instruktionen verstanden haben.</p>' + '<p> Bitte drücken Sie auf das Klickfeld, wenn Sie bereit sind.</p>' + '</p>Falls nicht, aktualisieren Sie bitte die Internetseite neu.</p>'
+            }},
+        choices: ['Start'], 
     }
+    
+  
+  
 
 
       
-      
+
       
       
       
@@ -182,7 +172,7 @@
       
       
     jsPsych.init({
-        timeline: [welcome, ifEng, ifGer, ready, fixation, ifAnswer, ifAntwort, ifStartEng, ifStartGer],
+        timeline: [welcome, ifEng, ifGer, ready, fixation, answer, start],
         show_progress_bar: true,
         auto_update_progress_bar: true
     });
