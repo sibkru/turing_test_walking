@@ -64,7 +64,7 @@ function loadFile(filePath) {
 }
 
 function createTrajectory(trial) {
-    var train = loadFile(trial.fn_train).split('\n');
+    var train = loadFile(trial.fn_train).split('\n').slice(1);
     path1 = train
     console.log(trial)
     if (!trial.catch_trial) {

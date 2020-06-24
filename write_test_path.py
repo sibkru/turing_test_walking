@@ -62,6 +62,10 @@ class MotionProcesser:
         self.joint_idx = {s.name: slice((j + 1) * 3, (j + 2) * 3) for j, s in enumerate(skeleton)}
 
     def add_offset(self, segment, cumdict, t):
+        """
+        This method converts joint angles to positions.
+        returns dictionary `cumdict` with all positions.
+        """
         pose = self.motion[t]
         if segment.parent:
             parent = segment.parent.name
@@ -138,15 +142,27 @@ def convert_bvh(fn_in, fn_out='path.txt'):
     lst = []
     for t in range(len(motion)):
         cd = mp.add_offset(skeleton[0], {}, t)
+        # Positions of all joints in one big list
         c3d = np.array([cd[k][1][:3].T for k in all_joints]).flatten()
-        # 96 entries
+        # 96 entries: 
         c3d = np.array([
             np.concatenate((cd[a][1][:3].T, cd[b][1][:3].T), axis=1)
             for a, b in pairs
         ]).flatten()
         lst.append(c3d)
     P = np.array(lst)
-    s = ""
+
+    # write GL-LINES specific data format
+    s = "" # TODO: use dictionary `pairs` to write header for *-lines.txt files"
+
+    # "pelvis-x;pelvis-y;pelvis-z;pelvis_right_femur-x;pelvis_right_femux-y;..."
+    header_list = []
+    for start, end in pairs:
+        for point in [start, end]:
+            for coord in ["x", "y", "z"]:
+                header_list.append(str(point) + '-' + coord)
+    s = ";".join(header_list) + '\n'
+
     for line in P:
         for _ in range(1):
             s += ";".join(map(process, list(line)))
@@ -163,7 +179,7 @@ if __name__ == '__main__':
     # skeleton = bvh.parse_bvh(bvh.read_file(fn_in))
     # pairs = set(pair_list(skeleton[0]))
 
-    recompute = False
+    recompute = True
     for fn in glob('bvh/*.bvh'):
         out_fn = fn.split('.')[0]+'-lines.txt'
         if recompute:
