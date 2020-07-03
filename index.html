@@ -11,15 +11,39 @@
     <output id="list"></output>
     <script src="gl-matrix.js"></script>
     <script src="webgl-utils.js"></script>
+    <script src="jspsych-6.1.0/jspsych.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/turing-test.js"></script>
     <!-- <script src="render.js"></script> -->
-    <script src="render_points.js"></script>
+    <!-- <script src="render_points.js"></script> -->
+    <script src="render_test.js"></script>
     <script>
-        trial = {
-            fn_train: 'bvh/pass-bottle-training1.txt',
-            natural: true,
-            occ_start: 1000
-        };
-        // main(trial);
-        main(trial);
+        function setupCanvas() {
+            const canvas_l = document.createElement('canvas');
+            const canvas_r = document.createElement('canvas');
+            canvas_l.setAttribute('id', 'glcanvas_l');
+            canvas_l.width = 440;
+            canvas_l.height = 480;
+            canvas_l.setAttribute("z-index", 9999);
+            document.getElementById('jspsych-content').appendChild(canvas_l);
+
+            canvas_r.setAttribute('id', 'glcanvas_r');
+            canvas_r.left = 450;
+            canvas_r.width = 440;
+            canvas_r.height = 480;
+            canvas_r.setAttribute("z-index", 9999);
+            document.getElementById('jspsych-content').appendChild(canvas_r);
+        }
+
+        var hello_trial = {
+            type: 'turing-test',
+            on_start: setupCanvas,
+            stimulus: 'Hello world!'
+        }
+
+        jsPsych.init({
+            timeline: [hello_trial]
+        })
+
     </script>
 </html>
