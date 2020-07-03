@@ -23,8 +23,9 @@ jsPsych.plugins['turing-test'] = (function() {
     plugin.trial = function(display_element, trial){
         var train = loadFile('bvh/pass-bottle-hold-training0-lines.txt').split('\n');
         var T = train.length / 24 * 1000
-        main('#glcanvas_r');
-        main('#glcanvas_l');
+        var then = performance.now()*0.001;
+        main('#glcanvas_r', then);
+        main('#glcanvas_l', then);
         jsPsych.pluginAPI.setTimeout(function() {
             jsPsych.finishTrial();
         }, T);

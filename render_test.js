@@ -1,4 +1,4 @@
-function main(side) {
+function main(side, then) {
 
     let strlines = loadFile('bvh/pass-bottle-hold-training0-lines.txt').split('\n').slice(1);
     lines = [];
@@ -51,7 +51,7 @@ function main(side) {
             requestAnimationFrame(render);
         }
     }
-    var then = performance.now()*0.001;
+    // var then = performance.now()*0.001;
     requestAnimationFrame(render);
 }
 
