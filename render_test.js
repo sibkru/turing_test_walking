@@ -1,10 +1,5 @@
-function main(side, then) {
-
-    let strlines = loadFile('bvh/pass-bottle-hold-training0-lines.txt').split('\n').slice(1);
-    lines = [];
-    for (var j = 0; j < strlines.length-1; ++j){
-        lines.push(strlines[j].split(";").map(parseFloat));
-    }
+function main(lines, side, then) {
+    console.log(lines[0])
     const canvas = document.querySelector(side);
     const gl = canvas.getContext('webgl');
     if (!gl) {
@@ -40,13 +35,13 @@ function main(side, then) {
         },
     };
 
-    const buffers = initBuffers(gl);
+    const buffers = initBuffers(gl, lines);
 
     function render(now) {
         now *= 0.001;
         const deltaTime = Math.max(0, now - then);
         t_idx = parseInt(deltaTime * 24)
-        drawScene(gl, programInfo, buffers, t_idx);
+        drawScene(gl, programInfo, buffers, t_idx, lines);
         if (t_idx < lines.length-1) {
             requestAnimationFrame(render);
         }
@@ -55,7 +50,7 @@ function main(side, then) {
     requestAnimationFrame(render);
 }
 
-function drawScene(gl, programInfo, position, t_idx){
+function drawScene(gl, programInfo, position, t_idx, lines){
     gl.clearColor(0.5, 0.5, 0.5, 1.0);  // Clear to black, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
@@ -131,7 +126,7 @@ function drawScene(gl, programInfo, position, t_idx){
     }
 }
 
-function initBuffers(gl) {
+function initBuffers(gl, lines) {
     var vertices = lines[0];
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);

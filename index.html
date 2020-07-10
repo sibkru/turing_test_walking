@@ -4,18 +4,17 @@
         <title>Render Point Light Walker</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="webgl.css" type="text/css">
+        <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body>
-        <canvas id="glcanvas" width=640 height=480></canvas>
-    </body>
+    
     <output id="list"></output>
     <script src="gl-matrix.js"></script>
     <script src="webgl-utils.js"></script>
     <script src="jspsych-6.1.0/jspsych.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
     <script src="jspsych-6.1.0/plugins/turing-test.js"></script>
-    <!-- <script src="render.js"></script> -->
-    <!-- <script src="render_points.js"></script> -->
     <script src="render_test.js"></script>
     <script>
         function setupCanvas() {
@@ -35,15 +34,133 @@
             document.getElementById('jspsych-content').appendChild(canvas_r);
         }
 
-        var hello_trial = {
-            type: 'turing-test',
-            on_start: setupCanvas,
-            stimulus: 'Hello world!'
+        // trial_txt_to_array requires a .txt-filename of the format
+        //      First line: Header; contains the name of all joints with respective x,y,z coordinates
+        //      Every other line: floating point number data for all joints (x,y and z) split by ";"
+        // and returns a list of lists of float values only containing the coordinates for one frame
+        //      [-0.483, 9.842, -0.113, -1.818, 9.436, -0.063, 0.033, 5.495, -0.611, 0.194, 8.443,...]
+        function trial_txt_to_array(trial_txt){
+            str_data = loadFile(trial_txt).split('\n').slice(1);
+            data = [];
+            for (j = 0; j < str_data.length; ++j){
+                data.push(str_data[j].split(";").map(parseFloat));
+            }
+            return data;
         }
 
-        jsPsych.init({
-            timeline: [hello_trial]
-        })
+        // trials_csv_to_dict requires a .csv-filename of the format
+        // filename_natural.txt;filename_model.txt;position_natural\n
+        // and returns a list of dictionaries of the form
+        // output = [{left:...,right:...}{}{}]
+        // "left" holds the data for the left glcanvas
+        // "right" holds the data for the right glcanvas
+        function trials_csv_to_dict(input) {
+            var trials_from_file = loadFile(input);
+            var trials = trials_from_file.split("\n");
+            output = [];
+            for (var i = 0; i < trials.length - 1; ++i){
+                var list = trials[i].split(";");
+                data_natural = trial_txt_to_array(list[0]);
+                data_model = trial_txt_to_array(list[1]);
+                const trial = {
+                    data_natural: data_natural,
+                    data_model: data_model,
+                    position_natural: list[2]
+                } 
+                if (trial.position_natural == "natural_left") {
+                    output.push({data: {left: trial.data_natural, right: trial.data_model}});
+                    console.log(output)
+                } else {
+                    output.push({data: {left: trial.data_model, right: trial.data_natural}});
+                    console.log(output)
+                }       
+            }
+            return output;
+        }
+
+        trials = trials_csv_to_dict('trials.csv');
+        //catch_trials = trials_csv_to_dict('catch_trials.csv');
+
+        //function create_sample_from_trial_dict(trials, number_of_trials){
+        //    trial_sample = jsPsych.randomization.smapleWithoutReplacement(trials, number_of_trials);
+        //}
+
+        // Frage: Unsere Trials duerften kuerzer werden, also koennen wir wahrscheinlich mehr Trials einbauen, richtig?
+        number_of_trials = 10;
+        // Muss wahrscheinlich angepasst werden, erstmal von dir uebernommen
+        //number_of_catch_trials = 2;
+        trial_sample = jsPsych.randomization.sampleWithoutReplacement(trials, number_of_trials);
+        console.log(trial_sample)
+        //catch_trial_sample = jsPsych.randomization.smapleWithoutReplacement(catch_trials, number_of_catch_trials);
+        //trial_sample = trial_sample.concat(catch_trial_sample);
+        number_of_trials = trial_sample.length;
+        
+        function saveData(name, data){
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'write_data.php'); // 'write_data.php' is the path to the php file described above.
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({filename: name, filedata: data}));
+        }
+        
+        var timeline = [];
+
+        var trial = {
+        timeline: [
+            {
+                type: 'html-button-response',
+                stimulus: 'Ready?',
+                choices: ['OK!'],
+                on_finish: function() {
+		            var trialidx = jsPsych.progress().current_trial_global;
+	                jsPsych.setProgressBar(trialidx / (4 * number_of_trials));
+                },
+		        post_trial_gap: 1000,
+            },
+            {
+              type: 'html-keyboard-response',
+              stimulus: '<div>First sequence</div><div style="font-size:60px;">+</div>',
+              choices: jsPsych.NO_KEYS,
+              trial_duration: 1000,
+	        },
+            {
+                type: "turing-test",
+                stimulus: jsPsych.timelineVariable('data'),
+                on_start: setupCanvas,
+            },
+            {
+                type: 'html-button-response',
+                stimulus: 'Which sequence did you perceive as more natural?',
+                choices: ['left', 'right'], 
+	        data: {test_part: 'response', test_stimulus: jsPsych.timelineVariable('trial')}
+            },
+        ],
+        timeline_variables: trial_sample,
+        randomize_order: true,
+        on_finish: function(){ 
+          //saveData("experiment_data_"+String(sona_subject_id)+ '_' +String(subject_id), jsPsych.data.get().json())
+          },
+    }
+    timeline.push(trial)
+
+    var debrief_block = {
+        type: "html-keyboard-response",
+	stimulus: function () {
+	        // var s = "<p>Thank you! </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code="+sona_subject_id+"'>Please click here to be granted your credit points.</a>"
+		var s = "<p>Thank you! </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=379&credit_token=ebd967ad6fb74381bf0b22344ca77749&survey_code="+sona_subject_id+"'>Please click here to be granted your credit points.</a>"
+	        return s
+	},
+        on_start: function() {
+            jsPsych.setProgressBar(1);
+        }
+    };
+    timeline.push(debrief_block);
+
+    jsPsych.init({
+        timeline: timeline,
+        show_progress_bar: true,
+        auto_update_progress_bar: false
+    });
 
     </script>
+    </body>
 </html>

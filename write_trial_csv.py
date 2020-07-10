@@ -45,11 +45,7 @@ def get_train_fn(fn, glprim):
 
 
 glprimitive = 'lines'
-if glprimitive == 'points':
-    fns = glob('bvh/vr_prediction_models/*/final.txt')
-elif glprimitive == 'lines':
-    fns = glob('bvh/vr_prediction_models/*/final-lines.txt')
-# print(parse_filename(get_model_str_from_fp(fns[0])))
+fns = glob('bvh/vr_prediction_models/*/final-lines.txt')
 
 import segments
 timings = segments.contact_timings

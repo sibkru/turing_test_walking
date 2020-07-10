@@ -21,15 +21,13 @@ jsPsych.plugins['turing-test'] = (function() {
     }
 
     plugin.trial = function(display_element, trial){
-        var train = loadFile('bvh/pass-bottle-hold-training0-lines.txt').split('\n');
-        var T = train.length / 24 * 1000
+        var T = Math.max(trial.stimulus.left.length, trial.stimulus.right.length) / 24 * 1000;
         var then = performance.now()*0.001;
-        main('#glcanvas_r', then);
-        main('#glcanvas_l', then);
+        main(trial.stimulus.right, '#glcanvas_r', then);
+        main(trial.stimulus.left, '#glcanvas_l', then);
         jsPsych.pluginAPI.setTimeout(function() {
             jsPsych.finishTrial();
         }, T);
     }
-
     return plugin;
 })();
