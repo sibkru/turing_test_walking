@@ -17,6 +17,10 @@
     <script src="jspsych-6.1.0/plugins/turing-test.js"></script>
     <script src="render_test.js"></script>
     <script>
+        var run_id = jsPsych.randomization.randomID(15);
+        jsPsych.data.addProperties({
+          subject: run_id,
+        });
         function setupCanvas() {
             const canvas_l = document.createElement('canvas');
             const canvas_r = document.createElement('canvas');
@@ -134,10 +138,11 @@
 	        data: {test_part: 'response', test_stimulus: jsPsych.timelineVariable('trial')}
             },
         ],
+
         timeline_variables: trial_sample,
         randomize_order: true,
         on_finish: function(){ 
-          //saveData("experiment_data_"+String(sona_subject_id)+ '_' +String(subject_id), jsPsych.data.get().json())
+          saveData("experiment_data_" +String(run_id), jsPsych.data.get().json())
           },
     }
     timeline.push(trial)
