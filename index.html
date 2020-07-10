@@ -64,8 +64,8 @@
             output = [];
             for (var i = 0; i < trials.length - 1; ++i){
                 var list = trials[i].split(";");
-                data_natural = trial_txt_to_array(list[0]);
-                data_model = trial_txt_to_array(list[1]);
+                data_natural = list[0];
+                data_model = list[1];
                 const trial = {
                     data_natural: data_natural,
                     data_model: data_model,
