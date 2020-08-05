@@ -1,8 +1,8 @@
-jsPsych.plugins['turing-test'] = (function() {
+jsPsych.plugins['training'] = (function() {
     var plugin = {};
 
     plugin.info = {
-        name: 'turing-test',
+        name: 'training',
         parameters: {
             stimulus: {
                 type: jsPsych.plugins.parameterType.STRING,
@@ -21,11 +21,11 @@ jsPsych.plugins['turing-test'] = (function() {
     }
 
     plugin.trial = function(display_element, trial){
-        var T = Math.max(trial.stimulus.left.length, trial.stimulus.right.length) / 24 * 1000;
+        var T = Math.max(trainLeft.length, trainRight.length) / 24 * 1000;
         var then = performance.now()*0.001;
-        left_lines = trial_txt_to_array(trial.stimulus.left);
-        right_lines = trial_txt_to_array(trial.stimulus.right);
-        main(left_lines, '#glcanvas_l', then);
+        left_lines = trial_txt_to_array(trainLeft);
+        right_lines = trial_txt_to_array(trainRight);
+        main(left_lines, '#glcanvas_l', then); // corrected right to left
         main(right_lines, '#glcanvas_r', then);
         jsPsych.pluginAPI.setTimeout(function() {
             jsPsych.finishTrial();
