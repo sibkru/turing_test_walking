@@ -16,60 +16,58 @@
     <output id="list"></output>
   </body>
   <script>
+
   /* * * * * * *
    * Variables *
    * * * * * * */
-    var langEng;
+    var number_of_trials = 3; 
     var trainLeft = 'bvh/pass-bottle-hold-training0-lines.txt'
     var trainRight = 'bvh/vr_prediction_models/model(dmp)-dataset(pass-bottle)-npsi(40)-hold(4)/final-lines.txt'
-
+   
+    var trials = trials_csv_to_dict('trial_list.csv');
+    var trial_sample = jsPsych.randomization.sampleWithoutReplacement(trials, number_of_trials);
+    console.log(trial_sample)
+    var number_of_trials = trial_sample.length;
+    var counter = 1;   
+    var sona_subject_id = GetURLParameter('subject')
+        if (!subject_id) { var subject_id = jsPsych.randomization.randomID(15);} 
+    var langEng;
   /* * * * * * * * * * * * * * *
    * Functions for the stimuli * 
    * * * * * * * * * * * * * * */  
-
+   
+    jsPsych.data.addProperties({subject: subject_id, sona: sona_subject_id});
 
     function setupCanvas() {
-            const canvas_l = document.createElement('canvas');
-            const canvas_r = document.createElement('canvas');
-            canvas_l.setAttribute('id', 'glcanvas_l');
-            canvas_l.width = 440;
-            canvas_l.height = 480;
-            canvas_l.setAttribute("z-index", 9999);
-            document.getElementById('jspsych-content').appendChild(canvas_l);
+        const canvas_l = document.createElement('canvas');
+        const canvas_r = document.createElement('canvas');
+        canvas_l.setAttribute('id', 'glcanvas_l');
+        canvas_l.width = 440;
+        canvas_l.height = 480;
+        canvas_l.setAttribute("z-index", 9999);
+        document.getElementById('jspsych-content').appendChild(canvas_l);
 
-            canvas_r.setAttribute('id', 'glcanvas_r');
-            canvas_r.left = 450;
-            canvas_r.width = 440;
-            canvas_r.height = 480;
-            canvas_r.setAttribute("z-index", 9999);
-            document.getElementById('jspsych-content').appendChild(canvas_r);
+        canvas_r.setAttribute('id', 'glcanvas_r');
+        canvas_r.left = 450;
+        canvas_r.width = 440;
+        canvas_r.height = 480;
+        canvas_r.setAttribute("z-index", 9999);
+        document.getElementById('jspsych-content').appendChild(canvas_r);
         }
     
-        /* trial_txt_to_array requires a .txt-filename of the format
-        First line: Header; contains the name of all joints with respective x,y,z coordinates
-        Every other line: floating point number data for all joints (x,y and z) split by ";"
-        and returns a list of lists of float values only containing the coordinates for one frame
-        -0.483, 9.842, -0.113, -1.818, 9.436, -0.063, 0.033, 5.495, -0.611, 0.194, 8.443,...]*/
-        function trial_txt_to_array(trial_txt){
-            str_data = loadFile(trial_txt).split('\n').slice(1);
-            data = [];
-            for (j = 0; j < str_data.length; ++j){
-                data.push(str_data[j].split(";").map(parseFloat));
-            }
-            return data;
+    function trial_txt_to_array(trial_txt){
+        str_data = loadFile(trial_txt).split('\n').slice(1);
+        data = [];
+        for (j = 0; j < str_data.length; ++j){
+            data.push(str_data[j].split(";").map(parseFloat));
+        }
+        return data;
         }
 
-        /* trials_csv_to_dict requires a .csv-filename of the format
-        filename_natural.txt;filename_model.txt;position_natural\n
-        and returns a list of dictionaries of the form
-        output = [{left:...,right:...}{}{}]
-        "left" holds the data for the left glcanvas
-        "right" holds the data for the right glcanvas */
-
-        function trials_csv_to_dict(input) {
-            var trials_from_file = loadFile(input);
-            var trials = trials_from_file.split("\n");
-            output = [];
+    function trials_csv_to_dict(input) {
+        var trials_from_file = loadFile(input);
+        var trials = trials_from_file.split("\n");
+        output = [];
             for (var i = 0; i < trials.length - 1; ++i){
                 var list = trials[i].split(";");
                 data_model = list[0];
@@ -77,53 +75,25 @@
                 const trial = {
                     data_natural: data_natural,
                     data_model: data_model,
-                    position_natural: list[2]
+                    position_natural: list[4]
                 } 
-                if (trial.position_natural == "natural_left") {
-                    output.push({data: {left: trial.data_natural, right: trial.data_model}});
+                if (trial.position_natural == "training_first") {
+                    output.push({data: {position: 'training_left', left: trial.data_natural, right: trial.data_model}});
                     console.log(output)
-                } else {
-                    output.push({data: {left: trial.data_model, right: trial.data_natural}});
+                } else if ("model_first"){
+                    output.push({data: {position: 'training_right', left: trial.data_model, right: trial.data_natural}});
                     console.log(output)
                 }       
             }
-            return output;
+        return output;
         }
 
-        trials = trials_csv_to_dict('trial_list.csv');
-        //catch_trials = trials_csv_to_dict('catch_trials.csv');
-
-        //function create_sample_from_trial_dict(trials, number_of_trials){
-        //    trial_sample = jsPsych.randomization.smapleWithoutReplacement(trials, number_of_trials);
-        //}
-
-        // Frage: Unsere Trials duerften kuerzer werden, also koennen wir wahrscheinlich mehr Trials einbauen, richtig?
-        number_of_trials = 10;
-        // Muss wahrscheinlich angepasst werden, erstmal von dir uebernommen
-        //number_of_catch_trials = 2;
-        trial_sample = jsPsych.randomization.sampleWithoutReplacement(trials, number_of_trials);
-        console.log(trial_sample)
-        //catch_trial_sample = jsPsych.randomization.smapleWithoutReplacement(catch_trials, number_of_catch_trials);
-        //trial_sample = trial_sample.concat(catch_trial_sample);
-        number_of_trials = trial_sample.length;
-    
-      
     function saveData(name, data){
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'write_data.php'); // 'write_data.php' is the path to the php file described above.
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({filename: name, filedata: data}));
     }
-
-
-    sona_subject_id = GetURLParameter('subject')
-    if (!subject_id) { var subject_id = jsPsych.randomization.randomID(15);}
-    
-     // 'https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code=XXXX'
-     // 'https://marburg-psychology.sona-systems.com/services/SonaAPI.svc/WebstudyCredit?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code=XXXX'
-    jsPsych.data.addProperties({subject: subject_id, sona: sona_subject_id});
-      
-
 
     /* * * * * * * * * * * * * *
     * Creation of the timeline *
@@ -137,7 +107,7 @@
         choices: ['English', 'Deutsch'], 
         stimulus: "<p>Welcome!<br> Please choose your language to start the experiment in the chosen language.</p><p>Willkommen!<br> Bitte wählen Sie eine Sprache um das Experiment in der ausgewählten Sprache zu starten</p>",
         on_finish: function(data) {
-            // choosing language by deleting corresponding arrays in timeline
+            // choosing language
             if(data.button_pressed == 0){
                 langEng = true;
                 } else {
@@ -164,7 +134,7 @@
             'Zu Übungszwecken wird der erste Durchgang nur eine Übung sein.'],
         show_clickable_nav: true
     };
-    
+    // Needed because instruction type cannot handle 'stimulus' but only 'pages'. It is used because instructions have clickable pages.
     var ifEng = {
         timeline: [instructionsEng],
         conditional_function: function(){
@@ -227,9 +197,9 @@
         type: 'html-button-response',                
         stimulus: function(){
             if(langEng){ 
-                return '<p>We hope that you unterstood the instrunctions.</p>' + '<p>Please click the button if you are ready.</p>' + '<p>If not then please reload the page for a restart.</p>';
+                return '<p>The experiment starts now.</p>' + '<p>Please click the button if you are ready.</p>';
             } else {
-                return '<p>Wir hoffen, dass Sie die Instruktionen verstanden haben.</p>' + '<p> Bitte drücken Sie auf das Klickfeld, wenn Sie bereit sind.</p>' + '</p>Falls nicht, dann starten Sie bitte die Internetseite neu.</p>'
+                return '<p>Das Experiment startet nun.</p>' + '<p> Bitte drücken Sie den Knopf, wenn Sie bereit sind.</p>'
             }},
         choices: ['Start'], 
     }
@@ -247,8 +217,11 @@
                     },
                     choices: ['OK!'],
                     on_finish: function() {
-                        var trialidx = jsPsych.progress().current_trial_global;
-                        jsPsych.setProgressBar(trialidx / (4 * number_of_trials));
+                        /*var trialidx = jsPsych.progress().current_trial_global;
+                        jsPsych.setProgressBar(trialidx / (4 * number_of_trials));*/
+                        
+                        jsPsych.setProgressBar(counter / (number_of_trials + 1));
+                        counter += 1;
                     },
                     post_trial_gap: 1000,
                 },
@@ -261,7 +234,7 @@
                 {
                     type: "turing-test",
                     stimulus: jsPsych.timelineVariable('data'),
-                    on_start: setupCanvas,
+                    on_start: setupCanvas, 
                 },
                 {
                     type: 'html-button-response',
@@ -272,26 +245,25 @@
                         return '<p>Welche Sequenz haben Sie als natürlicher empfunden?</p>';
                         }},
                     choices: ['1', '2'], 
-                    data: {test_part: 'response', test_stimulus: jsPsych.timelineVariable('trial')}
+                    data: {test_part: 'response', test_stimulus: jsPsych.timelineVariable('data')}
                 },
             ],
             timeline_variables: trial_sample,
             randomize_order: true,
             on_finish: function(){ 
-            saveData("experiment_data_" +String(run_id), jsPsych.data.get().json())
+            saveData("experiment_data_"+String(sona_subject_id)+ '_' +String(subject_id), jsPsych.data.get().json())
             },
     }
-
 
     var debrief= {
         type: "html-keyboard-response",
 	stimulus: function () {
 	        if(langEng = true) {
                 // var s = "<p>Thank you! </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code="+sona_subject_id+"'>Please click here to be granted your credit points.</a>"
-		        var s = "<p>Thank you! </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=379&credit_token=ebd967ad6fb74381bf0b22344ca77749&survey_code="+sona_subject_id+"'>Please click here to be granted your credit points.</a>";
+		        var s = "<p>Thank you for your participation! </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=379&credit_token=ebd967ad6fb74381bf0b22344ca77749&survey_code="+sona_subject_id+"'>Please click here to be granted your credit points.</a>";
                 return s;
             } else {
-                var s = "<p>Vielen Dank für Ihre Teilnahme an unserem Experiment. </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=379&credit_token=ebd967ad6fb74381bf0b22344ca77749&survey_code="+sona_subject_id+"'>Bitte klicken Sie hier, um Ihre Credit Points zu erhalten.</a>";
+                var s = "<p>Vielen Dank für Ihre Teilnahme. </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=379&credit_token=ebd967ad6fb74381bf0b22344ca77749&survey_code="+sona_subject_id+"'>Bitte klicken Sie hier, um Ihre Credit Points zu erhalten.</a>";
                 return s;
             }
 	},
@@ -299,27 +271,11 @@
             jsPsych.setProgressBar(1);
         }
     };
-  
-
-
-      
-
-      
-      
-      
-      
-      
-      
     
-      
-      
-      
-      
-      
     jsPsych.init({
         timeline: [welcome, ifEng, ifGer, training, answer, start, trial, debrief],
         show_progress_bar: true,
-        auto_update_progress_bar: true
+        auto_update_progress_bar: false,
     });
   </script>
 </html>
