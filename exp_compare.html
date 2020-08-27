@@ -10,6 +10,7 @@
     <script src="render_test.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
     <script src="jspsych-6.1.0/plugins/training.js"></script>
+    <script src="check.js"></script>
     <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
   </head>
   <body>
@@ -20,18 +21,25 @@
   /* * * * * * *
    * Variables *
    * * * * * * */
-    var number_of_trials = 3; 
+    var number_of_trials = 53; 
+    var number_of_checks = 2;
     var trainLeft = 'bvh/pass-bottle-hold-training0-lines.txt'
     var trainRight = 'bvh/vr_prediction_models/model(dmp)-dataset(pass-bottle)-npsi(40)-hold(4)/final-lines.txt'
    
     var trials = trials_csv_to_dict('trial_list.csv');
+    
     var trial_sample = jsPsych.randomization.sampleWithoutReplacement(trials, number_of_trials);
-    console.log(trial_sample)
+    
     var number_of_trials = trial_sample.length;
     var counter = 1;   
     var sona_subject_id = GetURLParameter('subject')
         if (!subject_id) { var subject_id = jsPsych.randomization.randomID(15);} 
     var langEng;
+
+    // Sampling the attention checks
+    var checks = arrcheck_to_trials();
+    var check_sample = jsPsych.randomization.sampleWithoutReplacement(checks, number_of_checks);
+    trial_sample.push(check_sample[0], check_sample[1]);
   /* * * * * * * * * * * * * * *
    * Functions for the stimuli * 
    * * * * * * * * * * * * * * */  
@@ -78,15 +86,43 @@
                     position_natural: list[4]
                 } 
                 if (trial.position_natural == "training_first") {
-                    output.push({data: {position: 'training_left', left: trial.data_natural, right: trial.data_model}});
-                    console.log(output)
+                    output.push({data: {position: 0, left: trial.data_natural, right: trial.data_model, att_check: false}});
+                    
                 } else if ("model_first"){
-                    output.push({data: {position: 'training_right', left: trial.data_model, right: trial.data_natural}});
-                    console.log(output)
+                    output.push({data: {position: 1, left: trial.data_model, right: trial.data_natural, att_check: false}});
+                    
                 }       
             }
         return output;
         }
+
+        function arrcheck_to_trials() {
+            var arr = create_check()
+            var output = [];
+            for (var i = 0; i < arr.length - 1; ++i){
+                var data_model = arr[i].fn;
+                var data_natural = arr[i].fn_train;
+                console.log(data_model);
+                var position_natural = rand_att_check();
+               
+                const trial = {
+                    data_natural: data_natural,
+                    data_model: data_model,
+                    position_natural: position_natural
+                } 
+                if (trial.position_natural == "left") {
+                    output.push({data: {position: 0, left: trial.data_natural, right: trial.data_model, att_check: true}});
+                    
+                } else {
+                    output.push({data: {position: 1, left: trial.data_model, right: trial.data_natural, att_check: true}});
+                   
+                }       
+            }
+        return output;
+        }
+
+        
+       
 
     function saveData(name, data){
         var xhr = new XMLHttpRequest();
