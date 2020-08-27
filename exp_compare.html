@@ -23,7 +23,7 @@
   /* * * * * * *
    * Variables *
    * * * * * * */
-    var number_of_trials = 53; 
+    var number_of_trials = 8; 
     var number_of_checks = 2;
     var trainLeft = 'bvh/pass-bottle-hold-training0-lines.txt'
     var trainRight = 'bvh/vr_prediction_models/model(dmp)-dataset(pass-bottle)-npsi(40)-hold(4)/final-lines.txt'
@@ -41,7 +41,7 @@
     // Sampling the attention checks
     var checks = arrcheck_to_trials();
     var check_sample = jsPsych.randomization.sampleWithoutReplacement(checks, number_of_checks);
-    trial_sample.push(check_sample[0], check_sample[1]);
+    trial_sample = trial_sample.concat(check_sample);
   /* * * * * * * * * * * * * * *
    * Functions for the stimuli * 
    * * * * * * * * * * * * * * */  
@@ -258,7 +258,7 @@
                         /*var trialidx = jsPsych.progress().current_trial_global;
                         jsPsych.setProgressBar(trialidx / (4 * number_of_trials));*/
                         
-                        jsPsych.setProgressBar(counter / (number_of_trials + 1));
+                        jsPsych.setProgressBar(counter / (trial_sample.length + 1));
                         counter += 1;
                     },
                     post_trial_gap: 1000,
