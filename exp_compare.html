@@ -153,7 +153,8 @@
                 }
             }
         };
-       
+    timeline.push(welcome);
+
     var instructionsEng = {
         type: 'instructions',
         pages: [
@@ -163,6 +164,7 @@
             '<p>For learning purposes the first trial will be only for training.</p>'],
         show_clickable_nav: true
     };
+    
     var instructionsGer = {
         type: 'instructions',
         pages: [
@@ -172,7 +174,11 @@
             'Zu Übungszwecken wird der erste Durchgang nur eine Übung sein.'],
         show_clickable_nav: true
     };
-    // Needed because instruction type cannot handle 'stimulus' but only 'pages'. It is used because instructions have clickable pages.
+    if(langEng){
+        timeline.push(instructionsEng);
+    } else {timeline.push(instructionsGer);}
+
+    /*// Needed because instruction type cannot handle 'stimulus' but only 'pages'. It is used because instructions have clickable pages.
     var ifEng = {
         timeline: [instructionsEng],
         conditional_function: function(){
@@ -193,7 +199,7 @@
             return false;
             }
         }}
-
+*/
     var ready = {
         type: 'html-button-response',
         stimulus: function() {
@@ -206,6 +212,7 @@
         choices: ['OK!'],
         post_trial_gap: 1000
     }
+    timeline.push(ready);
 
     var fixation = {
         type: 'html-keyboard-response',
@@ -213,12 +220,14 @@
         choices: jsPsych.NO_KEYS,
         trial_duration: 1000,
     }
+    timeline.push(fixation);
 
     var training = {
         type: "training",
         stimulus: 'hello',
         on_start: setupCanvas,
     }
+    timeline.push(training);
 
     var answer = {
         type: 'html-button-response',                
@@ -230,6 +239,7 @@
             }},
         choices: ['1', '2'], //jsPsych.ALL_KEYS,
     }  
+    timeline.push(answer);
     
     var start = {
         type: 'html-button-response',                
@@ -241,6 +251,7 @@
             }},
         choices: ['Start'], 
     }
+    timeline.push(start);
     
     var trial = {
             timeline: [
@@ -292,6 +303,7 @@
             saveData("experiment_data_"+String(sona_subject_id)+ '_' +String(subject_id), jsPsych.data.get().json())
             },
     }
+    timeline.push(trial);
 
     var debrief= {
         type: "html-keyboard-response",
@@ -309,11 +321,17 @@
             jsPsych.setProgressBar(1);
         }
     };
+    timeline.push(debrief);
+
     
     jsPsych.init({
-        timeline: [welcome, ifEng, ifGer, training, answer, start, trial, debrief],
+        timeline: timeline,
         show_progress_bar: true,
         auto_update_progress_bar: false,
+        exclusions: {
+            min_width: 930,
+            min_height: 540
+        }
     });
   </script>
 </html>
