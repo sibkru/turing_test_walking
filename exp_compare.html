@@ -153,7 +153,7 @@
                 }
             }
         };
-    timeline.push(welcome);
+    
 
     var instructionsEng = {
         type: 'instructions',
@@ -174,11 +174,9 @@
             'Klicken Sie weiter für einen Übungsdurchgang, um sich mit der Aufgabe vertraut zu machen.'],
         show_clickable_nav: true
     };
-    if(langEng = true){
-        timeline.push(instructionsEng);
-    } else {timeline.push(instructionsGer);}
+   
 
-    /*// Needed because instruction type cannot handle 'stimulus' but only 'pages'. It is used because instructions have clickable pages.
+    // Needed because instruction type cannot handle 'stimulus' but only 'pages'. It is used because instructions have clickable pages.
     var ifEng = {
         timeline: [instructionsEng],
         conditional_function: function(){
@@ -199,20 +197,19 @@
             return false;
             }
         }}
-*/
+
     var ready = {
         type: 'html-button-response',
         stimulus: function() {
-            if(langEng){
+            if(langEng == true){
                 return '<p>Ready?</p>';
             } else {
                 return '<p>Bereit?</p>';
-            }
-            },
+            }},
         choices: ['OK!'],
         post_trial_gap: 1000
     }
-    timeline.push(ready);
+    
 
     var fixation = {
         type: 'html-keyboard-response',
@@ -220,45 +217,45 @@
         choices: jsPsych.NO_KEYS,
         trial_duration: 1000,
     }
-    timeline.push(fixation);
+   
 
     var training = {
         type: "training",
         stimulus: 'hello',
         on_start: setupCanvas,
     }
-    timeline.push(training);
+    
 
     var answer = {
         type: 'html-button-response',                
         stimulus: function(){
-            if(langEng){
+            if(langEng == true){
                 return '<p>Which sequence did you perceive as more natural?</p>';
             } else {
                 return '<p>Welche Sequenz haben Sie als natürlicher empfunden?</p>';
             }},
         choices: ['1', '2'], //jsPsych.ALL_KEYS,
     }  
-    timeline.push(answer);
+    
     
     var start = {
         type: 'html-button-response',                
         stimulus: function(){
-            if(langEng){ 
+            if(langEng == true){ 
                 return '<p>The experiment starts now.</p>' + '<p>Please click the button if you are ready.</p>';
             } else {
                 return '<p>Das Experiment startet nun.</p>' + '<p> Bitte drücken Sie den Knopf, wenn Sie bereit sind.</p>'
             }},
         choices: ['Start'], 
     }
-    timeline.push(start);
+   
     
     var trial = {
             timeline: [
                 {
                     type: 'html-button-response',
                     stimulus: function() {
-                        if(langEng){
+                        if(langEng == true){
                         return '<p>Ready?</p>';
                         } else {
                         return '<p>Bereit?</p>';
@@ -288,7 +285,7 @@
                 {
                     type: 'html-button-response',
                     stimulus: function(){
-                        if(langEng){
+                        if(langEng == true){
                         return '<p>Which sequence did you perceive as more natural?</p>';
                         } else {
                         return '<p>Welche Sequenz haben Sie als natürlicher empfunden?</p>';
@@ -303,7 +300,7 @@
             saveData("experiment_data_"+String(sona_subject_id)+ '_' +String(subject_id), jsPsych.data.get().json())
             },
     }
-    timeline.push(trial);
+  
 
     var debrief= {
         type: "html-keyboard-response",
@@ -321,11 +318,11 @@
             jsPsych.setProgressBar(1);
         }
     };
-    timeline.push(debrief);
+    
 
     
     jsPsych.init({
-        timeline: timeline,
+        timeline: [welcome, ifGer, ifEng, ready, fixation, training, answer, start, trial, debrief],
         show_progress_bar: true,
         auto_update_progress_bar: false,
         exclusions: {
