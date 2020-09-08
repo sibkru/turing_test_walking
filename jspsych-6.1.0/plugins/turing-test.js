@@ -32,11 +32,11 @@ jsPsych.plugins['turing-test'] = (function() {
             var l = left_lines.length - 1;
             var r = right_lines.length - 1;
             if (l > r){
-                left_lines = leftTrial.slice(0, r);
-                right_lines = rightTrial.slice(0, r);
+                left_lines = left_lines.slice(0, r);
+                right_lines = right_lines.slice(0, r);
             } else {
-                left_lines = leftTrial.slice(0, l);
-                right_lines = rightTrial.slice(0, l);
+                left_lines = left_lines.slice(0, l);
+                right_lines = right_lines.slice(0, l);
         }};
         slice_frames();
         console.log(left_lines, right_lines);
