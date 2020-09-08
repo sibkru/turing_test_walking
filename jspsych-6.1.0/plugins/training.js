@@ -21,7 +21,6 @@ jsPsych.plugins['training'] = (function() {
     }
 
     plugin.trial = function(display_element, trial){
-        var T = Math.max(trainLeft.length, trainRight.length) / 24 * 1000;
         var then = performance.now()*0.001;
         var left_lines  = trial_txt_to_array(trainLeft);
         var right_lines = trial_txt_to_array(trainRight);
@@ -39,6 +38,7 @@ jsPsych.plugins['training'] = (function() {
                 right_lines = right_lines.slice(0, l);
         }};
         slice_frames();
+        var T = Math.max(left_lines.length, right_lines.length) / 24 * 1000;
         console.log(left_lines, right_lines);
         main(left_lines, '#glcanvas_l', then); // corrected right to left
         main(right_lines, '#glcanvas_r', then);
