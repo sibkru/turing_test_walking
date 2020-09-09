@@ -23,8 +23,8 @@
   /* * * * * * *
    * Variables *
    * * * * * * */
-    var number_of_trials = 1; 
-    var number_of_checks = 1;
+    var number_of_trials = 100; 
+    var number_of_checks = 10;
     var trainLeft = 'bvh/pass-bottle-hold-training0-lines.txt'
     var trainRight = 'bvh/vr_prediction_models/model(dmp)-dataset(pass-bottle)-npsi(40)-hold(4)/final-lines.txt'
 
@@ -310,7 +310,7 @@
                 // var s = "<p>Thank you! </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=376&credit_token=a434dd35804f4ffebcee989f5ddbb6f6&survey_code="+sona_subject_id+"'>Please click here to be granted your credit points.</a>"
 		        var s = "<p>Thank you for your participation! </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=436&credit_token=c258b0910a584158a6f07ca9183dee48&survey_code="+sona_subject_id+"'>Please click here to be granted your credit points.</a>";
                 return s;
-            } else {
+            } else if(langEng = false) {
                 var s = "<p>Vielen Dank für Ihre Teilnahme. </p><a href='https://marburg-psychology.sona-systems.com/webstudy_credit.aspx?experiment_id=436&credit_token=c258b0910a584158a6f07ca9183dee48&survey_code="+sona_subject_id+"'>Bitte klicken Sie hier, um Ihre Credit Points zu erhalten.</a>";
                 return s;
             }
