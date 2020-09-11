@@ -114,10 +114,10 @@
                     position_natural: position_natural
                 } 
                 if (trial.position_natural == "left") {
-                    output.push({data: {position: 0, left: trial.data_natural, right: trial.data_model, att_check: true}});
+                    output.push({data: {position: 0, left: trial.data_natural, right: trial.data_model, att_check: true, model: trial.data_model}});
                     
                 } else {
-                    output.push({data: {position: 1, left: trial.data_model, right: trial.data_natural, att_check: true}});
+                    output.push({data: {position: 1, left: trial.data_model, right: trial.data_natural, att_check: true, model: trial.data_model}});
                    
                 }       
             }
