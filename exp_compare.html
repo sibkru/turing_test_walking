@@ -286,6 +286,7 @@
                 {
                     type: 'html-button-response',
                     stimulus: function(){
+                        context.clearRect(0, 0, canvas.width, canvas.height);
                         if(langEng == true){
                         return '<p>Which sequence did you perceive as more natural?</p>';
                         } else {
