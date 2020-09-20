@@ -1,7 +1,7 @@
 function main(lines, side, then) {
     console.log(lines[0])
-    const canvas = document.querySelector(side);
-    const gl = canvas.getContext('webgl');
+    var canvas = document.querySelector(side);
+    var gl = canvas.getContext('webgl');
     if (!gl) {
       alert('Unable to initialize WebGL. Your browser or machine may not support it.');
       return;
