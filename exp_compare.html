@@ -50,8 +50,8 @@
     jsPsych.data.addProperties({subject: subject_id, sona: sona_subject_id});
 
     function setupCanvas() {
-        const canvas_l = document.createElement('canvas');
-        const canvas_r = document.createElement('canvas');
+        var canvas_l = document.createElement('canvas');
+        var canvas_r = document.createElement('canvas');
         canvas_l.setAttribute('id', 'glcanvas_l');
         canvas_l.width = 440;
         canvas_l.height = 480;
