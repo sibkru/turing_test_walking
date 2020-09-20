@@ -24,7 +24,7 @@ jsPsych.plugins['turing-test'] = (function() {
         var then = performance.now()*0.001;
         var left_lines  = trial_txt_to_array(trial.stimulus.left);
         var right_lines = trial_txt_to_array(trial.stimulus.right);
-        
+        print(trial.stimulus)
         // implement same trial length
        
         function slice_frames(){
