@@ -200,14 +200,20 @@
         }}
 
     var ready = {
-        type: 'html-button-response',
+        type: 'html-keyboard-response',
         stimulus: function() {
             if(langEng == true){
                 return '<p>Ready?</p>';
             } else {
                 return '<p>Bereit?</p>';
             }},
-        choices: ['OK!'],
+        prompt: function() {
+            if(langEng == true){
+                return '<p><i>Please press B</i></p>';
+            } else {
+                return '<p><i>Bitte drücken Sie B<i></p>';
+            }},
+        choices: ['space'],
         post_trial_gap: 1000
     }
     
@@ -237,9 +243,9 @@
             }},               
         prompt: function(){
                     if(langEng == true){
-                        return '<p>Press <b>F</b> for the left movement and <b>J</b> for the right movement.</p>';
+                        return '<p><i>Press <b>F</b> for the left movement and <b>J</b> for the right movement.</i></p>';
                     } else {
-                        return '<p>Drücken Sie <b>F</b> für die linke Bewegung und <b>J</b> für die rechte Bewegung</p>';
+                        return '<p><i>Drücken Sie <b>F</b> für die linke Bewegung und <b>J</b> für die rechte Bewegung</i></p>';
                     }},
         choices: ['F', 'J'], //jsPsych.ALL_KEYS,
     }  
@@ -263,12 +269,17 @@
                     type: 'html-button-response',
                     stimulus: function() {
                         if(langEng == true){
-                        return '<p>Ready?</p>';
+                            return '<p>Ready?</p>';
                         } else {
-                        return '<p>Bereit?</p>';
-                        }
-                    },
-                    choices: ['OK!'],
+                            return '<p>Bereit?</p>';
+                        }},
+                    prompt: function() {
+                        if(langEng == true){
+                            return '<p><i>Please press B</i></p>';
+                        } else {
+                            return '<p><i>Bitte drücken Sie B<i></p>';
+                        }},
+                    choices: ['space'],
                     on_finish: function() {
                         /*var trialidx = jsPsych.progress().current_trial_global;
                         jsPsych.setProgressBar(trialidx / (4 * number_of_trials));*/
