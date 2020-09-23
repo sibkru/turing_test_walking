@@ -161,7 +161,7 @@
         pages: [
             '<p>In this experiment, you have to compare two movements.</p><p></p> <p>For this you will see two movement sequences next to each other in a trial.</p><p>Please look at the fixation cross before every sequence.</p>',
             '<p>After each sequence you can choose which one appear <strong>natural</strong> for you by pressing the corresponding button.</p>',
-            'Choose <strong>1</strong> for the <i>left sequence</i> and <strong>2</strong> for the <i>right sequence</i>.</p>',
+            'Press <strong>F</strong> for the <i>left sequence</i> and <strong>J</strong> for the <i>right sequence</i>.</p>',
             '<p>For learning purposes the first trial will be only for training.</p>'],
         show_clickable_nav: true
     };
@@ -171,7 +171,7 @@
         pages: [
             '<p>In diesem Experiment vergleichen Sie zwei Bewegungen miteinander.</p><p></p><p>Sie werden in jedem Testdurchlauf  zwei Bewegungssequenzen nebeneinander sehen.</p><p>Schauen Sie bitte auf das Fixationskreuz vor jeder Sequenz.</p>',
             '<p>Sie können nach jeder Sequenz auswählen, welche der beiden Sequenzen für Sie <strong>natürlicher</strong> aussieht.</p> <p>Drücken Sie hierfür auf das entsprechende Klickfeld.</p>',
-            '<p>Wählen Sie für die <i>linke Sequenz</i> die <strong>1</strong> und für die <i>rechte Sequenz</i> die <strong>2</strong> aus.</p>',
+            '<p>Drücken Sie für die <i>linke Sequenz</i> <strong>F</strong> und für die <i>rechte Sequenz</i> die <strong>J</strong> aus.</p>',
             'Klicken Sie weiter für einen Übungsdurchgang, um sich mit der Aufgabe vertraut zu machen.'],
         show_clickable_nav: true
     };
@@ -228,13 +228,19 @@
     
 
     var answer = {
-        type: 'html-button-response',                
+        type: 'html-keyboard-response', 
         stimulus: function(){
             if(langEng == true){
                 return '<p>Which sequence did you perceive as more natural?</p>';
             } else {
                 return '<p>Welche Sequenz haben Sie als natürlicher empfunden?</p>';
-            }},
+            }},               
+        prompt: function(){
+                    if(langEng == true){
+                        return '<p>Press <b>F</b> for the left movement and <b>J</b> for the right movement.</p>';
+                    } else {
+                        return '<p>Drücken Sie <b>F</b> für die linke Bewegung und <b>J</b> für die rechte Bewegung</p>';
+                    }},
         choices: ['1', '2'], //jsPsych.ALL_KEYS,
     }  
     
@@ -283,15 +289,21 @@
                     stimulus: jsPsych.timelineVariable('data'),
                     on_start: setupCanvas, 
                 },
-                {
-                    type: 'html-button-response',
+                    { 
+                    type: 'html-keyboard-response',
                     stimulus: function(){
                         if(langEng == true){
                         return '<p>Which sequence did you perceive as more natural?</p>';
                         } else {
                         return '<p>Welche Sequenz haben Sie als natürlicher empfunden?</p>';
                         }},
-                    choices: ['1', '2'], 
+                    choices: ['F', 'J'],
+                    prompt: function(){
+                        if(langEng == true){
+                        return '<p>Press <b>F</b> for the left sequence and <b>J</b> for the right sequence.</p>';
+                        } else {
+                        return '<p>Drücken Sie <b>F</b> für die linke Sequenz und <b>J</b> für die rechte Sequenz.</p>';
+                        }}, 
                     data: {test_part: 'response', test_stimulus: jsPsych.timelineVariable('data')}
                 },
             ],
