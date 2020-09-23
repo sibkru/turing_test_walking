@@ -209,9 +209,9 @@
             }},
         prompt: function() {
             if(langEng == true){
-                return '<p><i>Please press B</i></p>';
+                return '<p><small><i>Press space</i></small></p>';
             } else {
-                return '<p><i>Bitte drücken Sie B<i></p>';
+                return '<p><small><i>Drücken Sie die Leertaste<i></small></p>';
             }},
         choices: ['space'],
         post_trial_gap: 1000
@@ -266,7 +266,7 @@
     var trial = {
             timeline: [
                 {
-                    type: 'html-button-response',
+                    type: 'html-keyboard-response',
                     stimulus: function() {
                         if(langEng == true){
                             return '<p>Ready?</p>';
@@ -275,9 +275,9 @@
                         }},
                     prompt: function() {
                         if(langEng == true){
-                            return '<p><i>Please press B</i></p>';
+                            return '<p><small><i>Press space</i></small></p>';
                         } else {
-                            return '<p><i>Bitte drücken Sie B<i></p>';
+                            return '<p><small><i>Drücken Sie die Leertaste<i></small></p>';
                         }},
                     choices: ['space'],
                     on_finish: function() {
@@ -311,9 +311,9 @@
                     choices: ['F', 'J'],
                     prompt: function(){
                         if(langEng == true){
-                        return '<p>Press <b>F</b> for the left sequence and <b>J</b> for the right sequence.</p>';
+                        return '<p><small>Press <b>F</b> for the left sequence and <b>J</b> for the right sequence.</small></p>';
                         } else {
-                        return '<p>Drücken Sie <b>F</b> für die linke Sequenz und <b>J</b> für die rechte Sequenz.</p>';
+                        return '<p><small>Drücken Sie <b>F</b> für die linke Sequenz und <b>J</b> für die rechte Sequenz.</small></p>';
                         }}, 
                     data: {test_part: 'response', test_stimulus: jsPsych.timelineVariable('data')}
                 },
