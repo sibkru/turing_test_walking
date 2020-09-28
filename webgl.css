@@ -5,3 +5,6 @@ canvas {
 video {
 	display: none;
 }
+small { 
+	font-size: smaller;
+  }
