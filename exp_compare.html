@@ -11,6 +11,7 @@
     <script src="render_test.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
     <script src="jspsych-6.1.0/plugins/training.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
     <script src="check.js"></script>
     <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
     <meta charset="UTF-8">
@@ -38,6 +39,8 @@
     var sona_subject_id = GetURLParameter('subject')
         if (!subject_id) { var subject_id = jsPsych.randomization.randomID(15);} 
     var langEng;
+    var survey_trial;
+
 
     // Sampling the attention checks
     var checks = arrcheck_to_trials();
@@ -140,11 +143,13 @@
 
     var timeline = [];
 
+
+
     var welcome = {
 
         type: 'html-button-response',
         choices: ['English', 'Deutsch'], 
-        stimulus: "<p>Welcome!<br> Please choose your language to start the experiment in the chosen language.</p><p>Willkommen!<br> Bitte wählen Sie eine Sprache um das Experiment in der ausgewählten Sprache zu starten</p>",
+        stimulus: "<p>Welcome!<br> Please choose your language to start the experiment in the chosen language.</p><p>Willkommen!<br> Bitte wählen Sie eine Sprache, um das Experiment in der ausgewählten Sprache zu starten</p>",
         on_finish: function(data) {
             // choosing language
             if(data.button_pressed == 0){
@@ -328,8 +333,64 @@
             saveData("experiment_data_"+String(sona_subject_id)+ '_' +String(subject_id), jsPsych.data.get().json())
             },
     }
-  
+    
+ //   if(langEng = true) {var survey_trial = surveyEng}
+ //   else {var survey_trial = surveyGer}
 
+    var surveyEng1 = {
+        type: 'survey-text',
+        preamble: "<p>You have almost completed the experiment.<br> In the following section we will ask you to fill in our questionnaire.</p>",
+        questions: [
+        {prompt: "How old are you?", placeholder: "for example: 21"}, 
+        {prompt: "Which gender do you have?", placeholder: "female, male, diverse"}
+        ],
+    };
+    var surveyEng2 = {
+        type: 'survey-text',
+        questions: [
+        {prompt: "To which area(s) of the stick man did you pay attention in particular?",rows: 5, columns: 60}, 
+        {prompt: "How could you tell that it was an artificial movement?",rows: 5, columns: 60},
+        {prompt: "Which aspect(s) of the animation made it particularly easy for you to identify the (supposedly) artificial movement?",rows: 5, columns: 60}
+        ],
+    };
+    var surveyGer1 = {
+        type: 'survey-text',
+        preamble: "<p>Sie haben das Experiment gleich abgeschlossen.<br>Im Folgenden bitten wir Sie, unseren anschließenden Fragebogen auszufüllen.</p>",
+        questions: [
+        {prompt: "Wie alt Sind Sie?", placeholder: "Bsp. 21"}, 
+        {prompt: "Welches Geschlecht haben Sie?", placeholder: "weiblich, männlich, divers"}
+        ],
+        button_label: "Weiter"
+    };
+    var surveyGer2 = {
+        type: 'survey-text',
+        questions: [
+        {prompt: "Auf welchen Bereich / welche Bereiche des Strichmännchens haben Sie besonders geachtet?",rows: 5, columns: 60}, 
+        {prompt: "Woran konnten Sie erkennen, dass es sich um die künstliche Bewegung handelt?",rows: 5, columns: 60},
+        {prompt: "Welchen Aspekt / welche Aspekte der Animation hat es Ihnen besonders einfach gemacht, die (vermeintlich) künstliche Bewegung zu identifizieren?",rows: 5, columns: 60}
+        ],
+        button_label: "Weiter"
+    };
+    var ifEngSurvey = {
+        timeline: [surveyEng1, surveyEng2],
+        conditional_function: function(){
+            if(langEng){
+                return true;
+            
+            } else {
+                return false;
+            }
+    }}
+    var ifGerSurvey = {
+        timeline: [surveyGer1,surveyGer2],
+        conditional_function: function(){
+            if(!langEng){
+            return true;
+        
+            } else {
+            return false;
+            }
+        }}
     var debrief= {
         type: "html-keyboard-response",
 	stimulus: function () {
@@ -350,7 +411,7 @@
 
     
     jsPsych.init({
-        timeline: [welcome, ifGer, ifEng, ready, fixation, training, answer, start, trial, debrief],
+        timeline: [welcome, ifEngSurvey, ifGerSurvey, ifGer, ifEng, ready, fixation, training, answer, start, trial, debrief],
         show_progress_bar: true,
         auto_update_progress_bar: false,
         exclusions: {
