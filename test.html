@@ -341,8 +341,8 @@
         type: 'survey-text',
         preamble: "<p>You have almost completed the experiment.<br> In the following section we will ask you to fill in our questionnaire.</p>",
         questions: [
-        {prompt: "How old are you?", placeholder: "for example: 21"}, 
-        {prompt: "Which gender do you have?", placeholder: "female, male, diverse"}
+        {prompt: "How old are you?", placeholder: "for example: 21", name: 'age'}, 
+        {prompt: "Which gender do you have?", placeholder: "female, male, diverse", name: 'gender'}
         ],
         on_finish: function(){ 
             saveData("experiment_data_"+String(sona_subject_id)+ '_' +String(subject_id), jsPsych.data.get().json())
@@ -351,7 +351,7 @@
     var surveyEng2 = {
         type: 'survey-text',
         questions: [
-        {prompt: "To which area(s) of the stick man did you pay attention in particular?",rows: 5, columns: 60}, 
+        {prompt: "To which area(s) of the stick man did you pay attention in particular?",rows: 5, columns: 60, name: 'area'}, 
         {prompt: "How could you tell that it was an artificial movement?",rows: 5, columns: 60},
         {prompt: "Which aspect(s) of the animation made it particularly easy for you to identify the (supposedly) artificial movement?",rows: 5, columns: 60}
         ],
@@ -363,8 +363,8 @@
         type: 'survey-text',
         preamble: "<p>Sie haben das Experiment gleich abgeschlossen.<br>Im Folgenden bitten wir Sie, unseren anschließenden Fragebogen auszufüllen.</p>",
         questions: [
-        {prompt: "Wie alt Sind Sie?", placeholder: "Bsp. 21"}, 
-        {prompt: "Welches Geschlecht haben Sie?", placeholder: "weiblich, männlich, divers"}
+        {prompt: "Wie alt Sind Sie?", placeholder: "Bsp. 21", name: 'age'}, 
+        {prompt: "Welches Geschlecht haben Sie?", placeholder: "weiblich, männlich, divers", name: 'gender'}
         ],
         button_label: "Weiter",
         on_finish: function(){ 
@@ -374,7 +374,7 @@
     var surveyGer2 = {
         type: 'survey-text',
         questions: [
-        {prompt: "Auf welchen Bereich / welche Bereiche des Strichmännchens haben Sie besonders geachtet?",rows: 5, columns: 60}, 
+        {prompt: "Auf welchen Bereich / welche Bereiche des Strichmännchens haben Sie besonders geachtet?",rows: 5, columns: 60, name: 'area'}, 
         {prompt: "Woran konnten Sie erkennen, dass es sich um die künstliche Bewegung handelt?",rows: 5, columns: 60},
         {prompt: "Welchen Aspekt / welche Aspekte der Animation hat es Ihnen besonders einfach gemacht, die (vermeintlich) künstliche Bewegung zu identifizieren?",rows: 5, columns: 60}
         ],
